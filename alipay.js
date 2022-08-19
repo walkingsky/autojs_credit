@@ -7,6 +7,8 @@ if (floaty && floaty.hasOwnProperty("checkPermission") && !floaty.checkPermissio
 
 //线程执行其任务
 var thread = null
+//序列化数据到本地
+var storage = storages.create("walkingsky");
 
 
 //----------------------------------------------
@@ -346,7 +348,53 @@ function taobao_farm_task() {
 }
 
 
+//  点淘-------------------------------------------------
+function diantao_task() {
 
+
+}
+
+// 京东签到------------------------------------
+
+function jd_signin() {
+    app.launch('com.jingdong.app.mall')
+    sleep(6000)
+    click_by_text('领京豆')
+    sleep(2000)
+    click_by_text('签到领京豆')
+}
+
+// 京东金融签到
+function jdjr_signin() {
+    app.launch('com.jd.jrapp')
+    sleep(10000)
+
+    //有弹窗广告
+
+    click_by_text('签到')
+    sleep(2000)
+
+    click_by_text('签到领金贴')
+
+}
+// 多点签到
+function duodian_signin() {
+    app.launch('com.wm.dmall')
+    sleep(10000)
+
+    //关闭广告
+    click_by_id('com.wm.dmall:id/iv_close')
+    click_by_desc('多点')
+    sleep(2000)
+    click_by_text('及时达')
+    sleep(2000)
+    swipe(device.width / 2, device.height / 2, device.width / 2, device.height / 5, 500)
+    sleep(2000)
+    find_images(2, './img/多点签到按钮.jpg')
+    sleep(3000)
+    click_by_text('bdbb222e-ecbe-4bb5-bd42-ce7b93013fd4')
+
+}
 
 ui.layout(
     <drawer id="drawer">
@@ -362,7 +410,25 @@ ui.layout(
                             <checkbox text="支付宝会员积分" id="ck_points_task" checked='true' />
                             <checkbox text="支付宝芭芭农场" id="ck_farm_task" checked='true' />
                             <button id="btn_run_main" text="执行选中任务" />
+                            <button id="btn_save_opt" text="保存当前配置" />
                             <button id="btn_exit" text="退出" />
+                        </vertical>
+                    </scroll>
+                </frame>
+                <frame>
+                    <scroll>
+                        <vertical >
+                            <checkbox text="多点签到" id="ck_duodian_signin" checked='false' />
+                            <checkbox text="京东签到领京豆" id="ck_jd_signin" checked='false' />
+                            <checkbox text="京东金融签到" id="ck_jdjr_signin" checked='false' />
+                            <button id="btn_run_signin" text="执行选中的签到任务" />
+                        </vertical>
+                    </scroll>
+                </frame>
+                <frame>
+                    <scroll>
+                        <vertical >
+                            <button id="btn_run_diantao" text="点淘刷元宝" />
                         </vertical>
                     </scroll>
                 </frame>
@@ -375,10 +441,13 @@ ui.layout(
 activity.setSupportActionBar(ui.toolbar);
 
 //设置滑动页面的标题
-ui.viewpager.setTitles(["支付宝"]);
+ui.viewpager.setTitles(["支付宝", "其他签到", "点淘"]);
 //让滑动页面和标签栏联动
 ui.tabs.setupWithViewPager(ui.viewpager);
 ui.btn_exit.click(function () { ui.finish() })
+ui.btn_save_opt.click(save_opt)
+
+load_opt() //加载保存配置
 
 //运行选择项
 ui.btn_run_main.click(function () {
@@ -386,23 +455,83 @@ ui.btn_run_main.click(function () {
         toast_console('当前程序正在执行其他任务,请结束后再运行', true); return
     }
     thread = threads.start(function () {
-        main(); exit()
+        main(1); exit()
     })
 })
 
-function main() {
+ui.btn_run_diantao.click(function () {
+    if (thread && thread.isAlive()) {
+        toast_console('当前程序正在执行其他任务,请结束后再运行', true); return
+    }
+    thread = threads.start(function () {
+        main(2)
+    })
+})
+
+ui.btn_run_signin.click(function () {
+    if (thread && thread.isAlive()) {
+        toast_console('当前程序正在执行其他任务,请结束后再运行', true); return
+    }
+    thread = threads.start(function () {
+        requestScreenCapture(false);
+        //多点签到
+        if (ui.ck_duodian_signin.checked) {
+            duodian_signin()
+        }
+        //京东签到
+        if (ui.ck_jd_signin.checked) {
+            jd_signin()
+        }
+        //京东金融签到
+        if (ui.ck_jdjr_signin.checked) {
+            jdjr_signin()
+        }
+
+        toast_console('###***全部签到执行完毕***###');
+    })
+})
+
+
+function main(app) {
     requestScreenCapture(false);
     //console.show();
-    taojinbi_task();
-    toast_console('###***全部任务执行完毕***###')
+    if (app == 1) taojinbi_task();
+    if (app == 2) diantao_task();
+    toast_console('###***全部任务执行完毕***###');
 }
+
+
 
 function taojinbi_task() {
     if (ui.ck_points_task.checked) {
         alipay_points()
     }
-
     if (ui.ck_farm_task.checked) {
         baba_farm_task()
     }
+}
+
+//获取选择框列表
+function get_check_box_list() {
+    return [ui.ck_points_task, ui.ck_farm_task, ui.ck_duodian_signin, ui.ck_jd_signin, ui.ck_jdjr_signin,
+
+    ];
+}
+
+//加载选择项状态
+function load_opt() {
+    let list_ck_v = storage.get("list_ck", null)
+    if (list_ck_v) {
+        let list_ck = get_check_box_list();
+        for (let i = 0; i < list_ck_v.length; i++) {
+            list_ck[i].checked = list_ck_v[i];
+        }
+    }
+}
+
+//保存选项
+function save_opt() {
+    let list_ck = get_check_box_list().map(x => x.checked)
+    storage.put("list_ck", list_ck)
+    toast_console('选项保存成功', true);
 }
