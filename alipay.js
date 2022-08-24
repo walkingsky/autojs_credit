@@ -88,13 +88,15 @@ function cs_click(num, rgb, xr, yr, wr, hr, flipup) {
 }
 
 //在屏幕上匹配图片，匹配到就点击
-function find_images(num, img_file, flipup) {
+function find_images(num, img_file, flipup, color) {
     let templ = images.read(img_file);
-    templ = images.grayscale(templ)
+    if (color == undefined)
+        templ = images.grayscale(templ)
     while (num--) {
         let img = captureScreen()
         if (flipup != undefined) img = images.rotate(img, 180)
-        img = images.grayscale(img)
+        if (color == undefined)
+            img = images.grayscale(img)
         let point = findImage(img, templ)
         if (point) {
             if (flipup != undefined) {
@@ -132,7 +134,7 @@ function view(title, num) {
         view_15seconds()
         //按照返回按钮的颜色点击返回
         //cs_click(2, '#243db3', 0.8, 0.7, 0.1, 0.2)
-        find_images(2, './img/返回领积分按钮.jpg')
+        find_images(6, './img/返回领积分按钮-.jpg')
         sleep(2000)
     }
 }
@@ -153,7 +155,7 @@ function do_task(title) {
     sleep(1000)
     //按照返回按钮的颜色点击返回
     //cs_click(2, '#243db3', 0.8, 0.4, 0.9, 0.8)
-    find_images(2, './img/返回领积分按钮.jpg')
+    find_images(6, './img/返回领积分按钮-.jpg')
 
 }
 
@@ -175,7 +177,9 @@ function alipay_points() {
     sleep(3000)
     click(540, 500)//直接点击坐标点
     sleep(3000)
-    click_by_text('每日签到')
+    click_by_text('全部领取')
+    sleep(2000)
+    click_by_textcontains('每日')
     sleep(2000)
     click_by_text('逛15秒赚3积分')
     my_btn = textContains('已完成浏览任务').findOne(3000)
@@ -241,17 +245,17 @@ function baba_farm_task() {
     click_by_text('芭芭农场')
     sleep(5000)
     //签到领肥料
-    find_images(2, './img/芭芭农场_领取肥料.jpg')
+    find_images(3, './img/芭芭农场_领取肥料.jpg')
     //打开领肥料任务列表
     sleep(2000)
-    task = find_images(2, './img/芭芭农场_领取肥料任务按钮.jpg')
+    task = find_images(3, './img/芭芭农场_领取肥料任务按钮.jpg')
     if (task) {
         sleep(2000)
         //签到领取
         click_by_text('领取')
         sleep(2000)
 
-        while (find_images(2, './img/芭芭农场任务列表去完成.jpg')) {
+        while (find_images(3, './img/芭芭农场任务列表去完成.jpg')) {
             sleep(5000)
             farm_view()
         }
@@ -262,7 +266,7 @@ function baba_farm_task() {
     sleep(2000)
     let keyi_shifei = true
     while (keyi_shifei) {
-        if (find_images(2, './img/芭芭农场_施肥按钮.jpg')) {
+        if (find_images(3, './img/芭芭农场_施肥按钮.jpg')) {
             sleep(2000)
             if (text('已领取').findOne(5000)) {
                 toast_console('任务列表弹出，说明不能再施肥了');
@@ -302,9 +306,9 @@ function taobao_farm_task() {
     click_by_text('芭芭农场')
     sleep(5000)
 
-    find_images(2, './img/淘宝芭芭农场领取肥料.jpg')
+    find_images(3, './img/淘宝芭芭农场领取肥料.jpg')
     sleep(2000)
-    find_images(2, './img/淘宝芭芭农场兔子领取肥料.jpg')
+    find_images(3, './img/淘宝芭芭农场兔子领取肥料.jpg')
     sleep(2000)
     //点击集肥料
     click_bounds(720, 1926, 885, 2109)
@@ -350,8 +354,8 @@ function taobao_farm_task() {
 
 //  点淘-------------------------------------------------
 function diantao_task() {
-
-
+    app.launch('com.taobao.diantao')
+    sleep(5000)
 }
 
 // 京东签到------------------------------------
@@ -361,7 +365,9 @@ function jd_signin() {
     sleep(6000)
     click_by_text('领京豆')
     sleep(2000)
-    click_by_text('签到领京豆')
+    click_by_textcontains('签到领')
+
+    toast_console('京东签到完成')
 }
 
 // 京东金融签到
@@ -372,9 +378,10 @@ function jdjr_signin() {
     //有弹窗广告
 
     click_by_text('签到')
-    sleep(2000)
+    sleep(5000)
 
     click_by_text('签到领金贴')
+    toast_console('京东金融签到完成')
 
 }
 // 多点签到
@@ -383,17 +390,17 @@ function duodian_signin() {
     sleep(10000)
 
     //关闭广告
-    click_by_id('com.wm.dmall:id/iv_close')
-    click_by_desc('多点')
+    if (!click_by_desc('多点')) click_by_id('com.wm.dmall:id/iv_close')
     sleep(2000)
     click_by_text('及时达')
     sleep(2000)
     swipe(device.width / 2, device.height / 2, device.width / 2, device.height / 5, 500)
     sleep(2000)
-    find_images(2, './img/多点签到按钮.jpg')
-    sleep(3000)
+    find_images(3, './img/多点签到按钮.jpg')
+    sleep(5000)
     click_by_text('bdbb222e-ecbe-4bb5-bd42-ce7b93013fd4')
 
+    toast_console('多点签到完成')
 }
 
 ui.layout(
@@ -478,15 +485,17 @@ ui.btn_run_signin.click(function () {
         if (ui.ck_duodian_signin.checked) {
             duodian_signin()
         }
+        sleep(2000)
         //京东签到
         if (ui.ck_jd_signin.checked) {
             jd_signin()
         }
+        sleep(2000)
         //京东金融签到
         if (ui.ck_jdjr_signin.checked) {
             jdjr_signin()
         }
-
+        sleep(2000)
         toast_console('###***全部签到执行完毕***###');
     })
 })
