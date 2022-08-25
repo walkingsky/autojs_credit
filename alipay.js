@@ -134,7 +134,9 @@ function view(title, num) {
         view_15seconds()
         //按照返回按钮的颜色点击返回
         //cs_click(2, '#243db3', 0.8, 0.7, 0.1, 0.2)
-        find_images(6, './img/返回领积分按钮-.jpg')
+        let no_image = find_images(6, './img/返回领积分按钮-.jpg')
+        if (!no_image)
+            click_bounds(952, 1632, 1078, 1770) //识别不到图片就硬性点击按钮位置
         sleep(2000)
     }
 }
@@ -155,7 +157,9 @@ function do_task(title) {
     sleep(1000)
     //按照返回按钮的颜色点击返回
     //cs_click(2, '#243db3', 0.8, 0.4, 0.9, 0.8)
-    find_images(6, './img/返回领积分按钮-.jpg')
+    let no_image = find_images(6, './img/返回领积分按钮-.jpg')
+    if (!no_image)
+        click_bounds(952, 1632, 1078, 1770) //识别不到图片就硬性点击按钮位置
 
 }
 
@@ -189,18 +193,25 @@ function alipay_points() {
     sleep(5000)
     click_by_text('做任务赚积分')
     sleep(2000)
+    let i = 2
+    do {
+        view('逛精选好物会场15秒', 3)
+        sleep(2000)
+        view('逛红包会场15秒', 3)
+        sleep(2000)
+        view('逛红包优品会场15秒', 3)
+        sleep(2000)
+        do_task('逛一逛芭芭农场')
+        sleep(2000)
+        do_task('逛一逛蚂蚁森林')
+        sleep(2000)
+        do_task('逛淘金币小镇领金币')
+        sleep(2000)
+        do_task('逛蚂蚁庄园喂小鸡')
+        sleep(2000)
+        i--
+    } while (i > 0)
 
-    view('逛精选好物会场15秒', 3)
-    sleep(2000)
-    view('逛红包会场15秒', 3)
-    sleep(2000)
-    do_task('逛一逛芭芭农场')
-    sleep(2000)
-    do_task('逛一逛蚂蚁森林')
-    sleep(2000)
-    do_task('逛淘金币小镇领金币')
-    sleep(2000)
-    do_task('逛蚂蚁庄园喂小鸡')
 
     click_by_desc('返回')
     sleep(2000)
