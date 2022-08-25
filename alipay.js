@@ -207,6 +207,8 @@ function alipay_points() {
         sleep(2000)
         do_task('逛淘金币小镇领金币')
         sleep(2000)
+        app.launch("com.eg.android.AlipayGphone")  //从淘宝切回支付宝
+        sleep(2000)
         do_task('逛蚂蚁庄园喂小鸡')
         sleep(2000)
         i--
