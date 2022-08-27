@@ -88,8 +88,9 @@ function cs_click(num, rgb, xr, yr, wr, hr, flipup) {
 }
 
 //在屏幕上匹配图片，匹配到就点击
-function find_images(num, img_file, flipup, color) {
+function find_images(num, img_file, flipup, color, threshold) {
     let templ = images.read(img_file);
+    //toast_console('color:' + color + ';threshold:' + threshold)
     if (color == undefined)
         templ = images.grayscale(templ)
     while (num--) {
@@ -97,7 +98,12 @@ function find_images(num, img_file, flipup, color) {
         if (flipup != undefined) img = images.rotate(img, 180)
         if (color == undefined)
             img = images.grayscale(img)
-        let point = findImage(img, templ)
+        if (threshold != undefined) threshold = 0.9
+        else
+            threshold = threshold
+        let point = findImage(img, templ, {
+            threshold: threshold //图片相似度
+        })
         if (point) {
             if (flipup != undefined) {
                 point.x = img.getWidth() - point.x; point.y = img.getHeight() - point.y
@@ -201,6 +207,10 @@ function alipay_points() {
         sleep(2000)
         view('逛红包优品会场15秒', 3)
         sleep(2000)
+        view('逛15s医保服务', 1)
+        sleep(2000)
+        view('15s逛一逛商品橱窗', 1)
+        sleep(2000)
         do_task('逛一逛芭芭农场')
         sleep(2000)
         do_task('逛一逛蚂蚁森林')
@@ -208,11 +218,15 @@ function alipay_points() {
         do_task('逛淘金币小镇领金币')
         sleep(2000)
         app.launch("com.eg.android.AlipayGphone")  //从淘宝切回支付宝
+        let no_image = find_images(6, './img/返回领积分按钮-.jpg')
+        sleep(2000)
+        if (!no_image)
+            click_bounds(952, 1632, 1078, 1770) //识别不到图片就硬性点击按钮位置
         sleep(2000)
         do_task('逛蚂蚁庄园喂小鸡')
         sleep(2000)
         i--
-    } while (i > 0)
+    } while (i > 0) // 循环执行多次，防止有些项排在下边展示不出来
 
 
     click_by_desc('返回')
@@ -226,13 +240,6 @@ function alipay_points() {
 
     toast_console('执行结束');
 }
-/*
-click_by_text('蚂蚁森林')
-sleep(5000)
-ant_forest_task()
-sleep(5000)
-*/
-
 
 
 //--芭芭农场---------------------------------------------------------------------
@@ -306,7 +313,39 @@ function baba_farm_task() {
 }
 
 // -------蚂蚁森林-------------------
+function paopao() {
+    for (let i = 0; i < 5; i++)
+        find_images(3, './img/大气泡color.jpg', undefined, true)
+    //find_images(3, './img/大气泡-.jpg', undefined, undefined, 0.4)
+}
+
 function ant_forest_task() {
+    app.launch("com.eg.android.AlipayGphone");
+    sleep(5000);
+    click_by_text('蚂蚁森林')
+    sleep(3000)
+    paopao()
+    find_images(3, './img/小气泡.jpg')
+    sleep(1000)
+    let a = find_images(3, './img/保护地.jpg')
+    if (!a) //如果没找到图片就直接点击位置
+        click_bounds(80, 1230, 200, 1370)
+    sleep(2000)
+    click_by_textcontains('开始巡护')
+    sleep(3000)
+    //视频
+    click_by_text('不看了，继续前进')
+    click_by_text('观看视频')
+    //继续前进
+    click_by_text('继续前进')
+    //加好友
+    let friend = text('邀请好友得巡护机会').findOne(5000)
+    if (friend)
+        click_bounds(504, 1467, 576, 1542)
+
+    //关闭，退出
+    click_by_desc('关闭')
+    sleep(2000)
     //关闭，退出
     click_by_desc('关闭')
 }
@@ -375,7 +414,7 @@ function diantao_task() {
 
 function jd_signin() {
     app.launch('com.jingdong.app.mall')
-    sleep(6000)
+    sleep(7000)
     click_by_text('领京豆')
     sleep(2000)
     click_by_textcontains('签到领')
@@ -429,6 +468,7 @@ ui.layout(
                         <vertical >
                             <checkbox text="支付宝会员积分" id="ck_points_task" checked='true' />
                             <checkbox text="支付宝芭芭农场" id="ck_farm_task" checked='true' />
+                            <checkbox text="支付宝蚂蚁森林" id="ck_forest_task" checked='true' />
                             <button id="btn_run_main" text="执行选中任务" />
                             <button id="btn_save_opt" text="保存当前配置" />
                             <button id="btn_exit" text="退出" />
@@ -438,9 +478,9 @@ ui.layout(
                 <frame>
                     <scroll>
                         <vertical >
-                            <checkbox text="多点签到" id="ck_duodian_signin" checked='false' />
-                            <checkbox text="京东签到领京豆" id="ck_jd_signin" checked='false' />
-                            <checkbox text="京东金融签到" id="ck_jdjr_signin" checked='false' />
+                            <checkbox text="多点签到" id="ck_duodian_signin" checked='true' />
+                            <checkbox text="京东签到领京豆" id="ck_jd_signin" checked='true' />
+                            <checkbox text="京东金融签到" id="ck_jdjr_signin" checked='true' />
                             <button id="btn_run_signin" text="执行选中的签到任务" />
                         </vertical>
                     </scroll>
@@ -484,7 +524,7 @@ ui.btn_run_diantao.click(function () {
         toast_console('当前程序正在执行其他任务,请结束后再运行', true); return
     }
     thread = threads.start(function () {
-        main(2)
+        main(2); exit()
     })
 })
 
@@ -510,6 +550,7 @@ ui.btn_run_signin.click(function () {
         }
         sleep(2000)
         toast_console('###***全部签到执行完毕***###');
+        exit()
     })
 })
 
@@ -531,13 +572,13 @@ function taojinbi_task() {
     if (ui.ck_farm_task.checked) {
         baba_farm_task()
     }
+    if (ui.ck_forest_task.checked)
+        ant_forest_task()
 }
 
 //获取选择框列表
 function get_check_box_list() {
-    return [ui.ck_points_task, ui.ck_farm_task, ui.ck_duodian_signin, ui.ck_jd_signin, ui.ck_jdjr_signin,
-
-    ];
+    return [ui.ck_points_task, ui.ck_farm_task, ui.ck_duodian_signin, ui.ck_jd_signin, ui.ck_jdjr_signin];
 }
 
 //加载选择项状态
