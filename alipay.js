@@ -124,7 +124,7 @@ function view_15seconds() {
 }
 
 // 浏览3次 的任务
-function view(title, num) {
+function view(title, num, close) {
     let i = 0
     for (; i < num; i++) {
         if (click_by_textcontains(title) == false)
@@ -145,6 +145,8 @@ function view(title, num) {
             click_bounds(952, 1632, 1078, 1770) //识别不到图片就硬性点击按钮位置
         sleep(2000)
     }
+    if (close != undefined)
+        click_by_desc('关闭')
 }
 
 //做任务
@@ -207,7 +209,9 @@ function alipay_points() {
         sleep(2000)
         view('逛红包优品会场15秒', 3)
         sleep(2000)
-        view('逛15s医保服务', 1)
+        view('逛15s医保服务', 1, true)
+        sleep(2000)
+        view('逛15s天猫超市', 1)
         sleep(2000)
         view('15s逛一逛商品橱窗', 1)
         sleep(2000)
@@ -223,7 +227,7 @@ function alipay_points() {
         if (!no_image)
             click_bounds(952, 1632, 1078, 1770) //识别不到图片就硬性点击按钮位置
         sleep(2000)
-        do_task('逛蚂蚁庄园喂小鸡')
+        do_task('蚂蚁庄园')
         sleep(2000)
         i--
     } while (i > 0) // 循环执行多次，防止有些项排在下边展示不出来
@@ -405,9 +409,42 @@ function taobao_farm_task() {
 
 
 //  点淘-------------------------------------------------
+//看直播60秒
+function view_live() {
+    let live = click_by_textcontains('看直播60秒') //看直播的按钮
+    if (live == true) {
+        sleep(63000)
+        click_by_id('taolive_close_btn')
+    }
+}
+
+//签到
+function taolive_sign() {
+    click_by_text('今日签到')
+    sleep(2000)
+    view_live()
+    className("android.view.View").clickable(true).depth(16).findOne().click() //返回元宝中心
+}
+
 function diantao_task() {
-    app.launch('com.taobao.diantao')
+    app.launch('com.taobao.live')
     sleep(5000)
+    //click_by_id('hp3_tab_img')
+    find_images(3, './img/元宝中心按钮.jpg', undefined, true)
+    sleep(3000)
+    //领取奖励
+    click_by_text('领取奖励')
+    sleep(500)
+    view_live()
+    sleep(1000)
+    taolive_sign()
+    sleep(1000)
+    //click_by_text('text = O1CN01LxFPWH1Mmy2hurJW4_!!6000000001478-2-tps-54-54.png_') //关闭弹层按钮
+    //提现
+    click_by_text('提现')
+    sleep(1000)
+    click_by_textcontains('提现到支付宝')
+    click_by_desc('转到上一层级')
 }
 
 // 京东签到------------------------------------
@@ -515,7 +552,7 @@ ui.btn_run_main.click(function () {
         toast_console('当前程序正在执行其他任务,请结束后再运行', true); return
     }
     thread = threads.start(function () {
-        main(1); exit()
+        main(1); //exit()
     })
 })
 
@@ -524,7 +561,7 @@ ui.btn_run_diantao.click(function () {
         toast_console('当前程序正在执行其他任务,请结束后再运行', true); return
     }
     thread = threads.start(function () {
-        main(2); exit()
+        main(2); //exit()
     })
 })
 
