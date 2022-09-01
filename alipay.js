@@ -432,6 +432,11 @@ function diantao_task() {
     //click_by_id('hp3_tab_img')
     find_images(3, './img/元宝中心按钮.jpg', undefined, true)
     sleep(3000)
+    //每日收益
+    click_by_text('每日收益')
+    sleep(4000)
+    click_bounds(0, 84, 123, 213)
+    sleep(1000)
     //领取奖励
     click_by_text('领取奖励')
     sleep(500)
@@ -442,8 +447,11 @@ function diantao_task() {
     //click_by_text('text = O1CN01LxFPWH1Mmy2hurJW4_!!6000000001478-2-tps-54-54.png_') //关闭弹层按钮
     //提现
     click_by_text('提现')
-    sleep(1000)
-    click_by_textcontains('提现到支付宝')
+    sleep(2000)
+    click_by_text('提现到支付宝')
+    sleep(2000)
+    click_by_text('确认提现')
+    sleep(2000)
     click_by_desc('转到上一层级')
 }
 
@@ -452,7 +460,9 @@ function diantao_task() {
 function jd_signin() {
     app.launch('com.jingdong.app.mall')
     sleep(7000)
-    click_by_text('领京豆')
+
+    //click_by_text('领京豆')  //第一次打开京东，会找不到这个text按钮，换用图片查找
+    find_images(3, './img/领京豆按钮.jpg', undefined, true)
     sleep(2000)
     click_by_textcontains('签到领')
 
@@ -587,7 +597,7 @@ ui.btn_run_signin.click(function () {
         }
         sleep(2000)
         toast_console('###***全部签到执行完毕***###');
-        exit()
+        //exit()
     })
 })
 
