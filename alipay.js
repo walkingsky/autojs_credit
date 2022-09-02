@@ -10,6 +10,12 @@ var thread = null
 //序列化数据到本地
 var storage = storages.create("walkingsky");
 
+var ii = 0; jj = 0 //定时触发准备的全局变量
+
+var thread_egg = null
+var thread_swipe = null
+var thread_egg_id = null
+var thread_swipe_id = null
 
 //----------------------------------------------
 //消息提示
@@ -26,7 +32,7 @@ function btn_position_click(x) { if (x) click(x.bounds().centerX(), x.bounds().c
 function click_by_text(txt) {
     let btn = text(txt).findOne(5000)
     if (!btn) {
-        toast_console('没找到‘' + txt + '’按钮')
+        console.log('没找到‘' + txt + '’按钮')
         return;
     }
     btn_position_click(btn)
@@ -36,7 +42,7 @@ function click_by_text(txt) {
 function click_by_desc(txt) {
     let btn = desc(txt).findOne(5000);
     if (!btn) {
-        toast_console('没找到‘' + txt + '’按钮')
+        console.log('没找到‘' + txt + '’按钮')
         return;
     }
     btn_position_click(btn)
@@ -46,7 +52,7 @@ function click_by_desc(txt) {
 function click_by_id(id_str) {
     let btn = id(id_str).findOne(5000);
     if (!btn) {
-        toast_console('没找到‘' + id_str + '’按钮')
+        console.log('没找到‘' + id_str + '’按钮')
         return;
     }
     btn_position_click(btn)
@@ -57,7 +63,7 @@ function click_by_id(id_str) {
 function click_by_textcontains(txt) {
     let btn = textContains(txt).findOne(5000);
     if (!btn) {
-        toast_console('没找到‘' + txt + '’按钮')
+        console.log('没找到‘' + txt + '’按钮')
         return false;
     }
     btn_position_click(btn)
@@ -413,7 +419,13 @@ function taobao_farm_task() {
 function view_live() {
     let live = click_by_textcontains('看直播60秒') //看直播的按钮
     if (live == true) {
-        sleep(63000)
+        while (true) {
+            if (id('gold_egg_image').exists()) { click_by_id('gold_egg_image'); console.log('点击金蛋领奖') }
+            if (!text('后完成'))
+                break
+
+            sleep(1000)
+        }
         click_by_id('taolive_close_btn')
     }
 }
@@ -426,6 +438,7 @@ function taolive_sign() {
     className("android.view.View").clickable(true).depth(16).findOne().click() //返回元宝中心
 }
 
+//点淘签到任务
 function diantao_task() {
     app.launch('com.taobao.live')
     sleep(5000)
@@ -453,6 +466,114 @@ function diantao_task() {
     click_by_text('确认提现')
     sleep(2000)
     click_by_desc('转到上一层级')
+}
+//转换时间字符串到秒钟
+function str_to_seconds(str) {
+    console.log(str)
+    let arr = str.split(':')
+    console.log(arr)
+    if (arr.length == 3)
+        return parseInt(arr[0]) * 3600 + parseInt(arr[1]) * 60 + parseInt(arr[2])
+    else
+        return false
+}
+
+function get_remaining() {
+    console.log('获取领奖剩余时间')
+    let remaining = 0
+    let a = className('android.view.View').depth(28).indexInParent(1).find()
+    try {
+        var re = /\d{2}:\d{2}:\d{2}/
+        a.forEach(element => {
+            if (element.text() == '领取奖励') {
+                console.log('领取奖励')
+                element.click()
+                view_live()
+                throw new Error()
+            }
+            if (re.exec(element.text())) {
+                remaining = str_to_seconds(element.text())
+                throw new Error()
+            }
+        });
+    } catch (e) { }
+    console.log('领奖剩余时间：' + remaining)
+    return remaining
+}
+
+
+//点淘刷元宝任务
+function diantao_yuanbao() {
+    let remaining = 0 //领奖剩余时间，单位秒
+    app.launch('com.taobao.live')
+    sleep(5000)
+    //click_by_id('hp3_tab_img')
+    find_images(3, './img/元宝中心按钮.jpg', undefined, true)
+    sleep(3000)
+
+    while (true) {
+        remaining = get_remaining()
+        if (remaining == 0)
+            remaining = get_remaining()
+        else {
+            let start = Date.parse(new Date()) / 1000  //开始计时
+
+            //返回视频列表
+            if (!id('taolive_close_btn').exists()) {
+                className('android.view.View').depth(25).indexInParent(1).findOne().click()
+                sleep(1000)
+                click_by_text('观看')
+            }
+            ii = 0
+            jj = 0
+            console.log('jj:' + jj + 'ii:' + ii)
+            while (Date.parse(new Date()) / 1000 - start <= remaining) {
+
+                if (id('gold_egg_image').exists() && jj == 0) {
+                    jj = 1
+                    console.log('jj:' + jj + 'ii:' + ii)
+                    thread_egg = threads.start(function () {
+                        thread_egg_id = setTimeout(() => {
+                            jj = 0
+                            click_by_id('gold_egg_image')
+                            console.log('点击金蛋领奖')
+                            return
+                        }, 40000)
+                    })
+
+                }
+                if (ii == 0) {
+                    ii = 1
+                    console.log('jj:' + jj + 'ii:' + ii)
+                    thread_swipe = threads.start(function () {
+                        thread_swipe_id = setTimeout(() => {
+                            ii = 0
+                            swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 700)
+                            console.log('划屏操作')
+                            return
+                        }, 30000)
+                    })
+                }
+                //翻倍操作
+                //if (id('gold_action_text').exists())
+                //    if (id('gold_action_text').text() == '')
+                //        click_by_id('gold_action_layout')
+                //关闭广告弹层
+                click_by_text('O1CN0157Hhvw1cdq2jrQoth_!!6000000003624-2-tps-72-72')
+            }
+            if (null != thread_egg)
+                thread_egg.interrupt()
+            if (null != thread_swipe)
+                thread_swipe.interrupt()
+            if (null != thread_egg_id)
+                clearTimeout(thread_egg_id)
+            if (null != thread_swipe_id)
+                clearTimeout(thread_swipe_id)
+            click_by_id('gold_progress_bar')
+            sleep(3000)
+        }
+    }
+
 }
 
 // 京东签到------------------------------------
@@ -535,7 +656,8 @@ ui.layout(
                 <frame>
                     <scroll>
                         <vertical >
-                            <button id="btn_run_diantao" text="点淘刷元宝" />
+                            <button id="btn_diantao_signin" text="点淘刷签到" />
+                            <button id="btn_diantao_yuanbao" text="点淘刷元宝" />
                         </vertical>
                     </scroll>
                 </frame>
@@ -566,12 +688,21 @@ ui.btn_run_main.click(function () {
     })
 })
 
-ui.btn_run_diantao.click(function () {
+ui.btn_diantao_signin.click(function () {
     if (thread && thread.isAlive()) {
         toast_console('当前程序正在执行其他任务,请结束后再运行', true); return
     }
     thread = threads.start(function () {
         main(2); //exit()
+    })
+})
+
+ui.btn_diantao_yuanbao.click(function () {
+    if (thread && thread.isAlive()) {
+        toast_console('当前程序正在执行其他任务,请结束后再运行', true); return
+    }
+    thread = threads.start(function () {
+        main(3); //exit()
     })
 })
 
@@ -607,6 +738,7 @@ function main(app) {
     //console.show();
     if (app == 1) taojinbi_task();
     if (app == 2) diantao_task();
+    if (app == 3) diantao_yuanbao();
     toast_console('###***全部任务执行完毕***###');
 }
 
