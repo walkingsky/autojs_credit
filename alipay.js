@@ -418,12 +418,17 @@ function taobao_farm_task() {
 //看直播60秒
 function view_live() {
     let live = click_by_textcontains('看直播60秒') //看直播的按钮
+    sleep(1000)
     if (live == true) {
         while (true) {
-            if (id('gold_egg_image').exists()) { click_by_id('gold_egg_image'); console.log('点击金蛋领奖') }
-            if (!text('后完成'))
-                break
+            //if (id('gold_egg_image').exists()) { click_by_id('gold_egg_image'); console.log('点击金蛋领奖') }
+            //翻倍操作
+            if (id('gold_action_text').exists())
+                if (id('gold_action_text').findOne().text() == '点击翻倍')
+                    click_by_id('gold_action_layout')
 
+            if (!textContains('后完成').exists())
+                break
             sleep(1000)
         }
         click_by_id('taolive_close_btn')
@@ -446,9 +451,10 @@ function diantao_task() {
     find_images(3, './img/元宝中心按钮.jpg', undefined, true)
     sleep(3000)
     //每日收益
-    click_by_text('每日收益')
-    sleep(4000)
-    click_bounds(0, 84, 123, 213)
+    if (click_by_text('每日收益')) {
+        sleep(4000)
+        click_bounds(0, 84, 123, 213)
+    }
     sleep(1000)
     //领取奖励
     click_by_text('领取奖励')
@@ -555,9 +561,11 @@ function diantao_yuanbao() {
                     })
                 }
                 //翻倍操作
-                //if (id('gold_action_text').exists())
-                //    if (id('gold_action_text').text() == '')
-                //        click_by_id('gold_action_layout')
+                if (id('gold_action_text').exists())
+                    if (id('gold_action_text').findOne().text() == '点击翻倍')
+                        click_by_id('gold_action_layout')
+
+
                 //关闭广告弹层
                 click_by_text('O1CN0157Hhvw1cdq2jrQoth_!!6000000003624-2-tps-72-72')
             }
