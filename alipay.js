@@ -207,7 +207,7 @@ function alipay_points() {
     sleep(5000)
     click_by_text('做任务赚积分')
     sleep(2000)
-    let i = 2
+    let i = 3
     do {
         view('逛精选好物会场15秒', 3)
         sleep(2000)
@@ -217,7 +217,9 @@ function alipay_points() {
         sleep(2000)
         view('逛15s医保服务', 1, true)
         sleep(2000)
-        view('逛15s天猫超市', 1)
+        view('去百度逛一逛领好礼', 1)
+        sleep(2000)
+        view('逛15s天猫超市', 1, true)
         sleep(2000)
         view('15s逛一逛商品橱窗', 1)
         sleep(2000)
@@ -226,12 +228,12 @@ function alipay_points() {
         do_task('逛一逛蚂蚁森林')
         sleep(2000)
         do_task('逛淘金币小镇领金币')
-        sleep(2000)
+        sleep(3000)
         app.launch("com.eg.android.AlipayGphone")  //从淘宝切回支付宝
         let no_image = find_images(6, './img/返回领积分按钮-.jpg')
-        sleep(2000)
-        if (!no_image)
-            click_bounds(952, 1632, 1078, 1770) //识别不到图片就硬性点击按钮位置
+        //sleep(2000)
+        //if (!no_image)
+        //    click_bounds(952, 1632, 1078, 1770) //识别不到图片就硬性点击按钮位置
         sleep(2000)
         do_task('蚂蚁庄园')
         sleep(2000)
@@ -424,7 +426,7 @@ function view_live() {
             //if (id('gold_egg_image').exists()) { click_by_id('gold_egg_image'); console.log('点击金蛋领奖') }
             //翻倍操作
             if (id('gold_action_text').exists())
-                if (id('gold_action_text').findOne().text() == '点击翻倍')
+                if (id('gold_action_text').findOne().text() == '点击翻倍' || id('gold_action_text').findOne().text() == '点击 x4 倍')
                     click_by_id('gold_action_layout')
 
             if (!textContains('后完成').exists())
@@ -562,7 +564,7 @@ function diantao_yuanbao() {
                 }
                 //翻倍操作
                 if (id('gold_action_text').exists())
-                    if (id('gold_action_text').findOne().text() == '点击翻倍')
+                    if (id('gold_action_text').findOne().text() == '点击翻倍' || id('gold_action_text').findOne().text() == '点击 x4 倍')
                         click_by_id('gold_action_layout')
 
 
@@ -578,6 +580,9 @@ function diantao_yuanbao() {
             if (null != thread_swipe_id)
                 clearTimeout(thread_swipe_id)
             click_by_id('gold_progress_bar')
+            sleep(500)
+            if (id('gold_egg_image').exists()) //防止点击到领取满蛋积分，而不能进入元宝中心的操作
+                id('gold_egg_image').click()
             sleep(3000)
         }
     }
