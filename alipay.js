@@ -130,6 +130,9 @@ function view_15seconds() {
 }
 
 // 浏览3次 的任务
+//title 点击任务名称
+// num 执行次数
+//colse ，部分任务没有返回领取积分的按钮，只能点右上角的关闭按钮返回
 function view(title, num, close) {
     let i = 0
     for (; i < num; i++) {
@@ -146,9 +149,11 @@ function view(title, num, close) {
         view_15seconds()
         //按照返回按钮的颜色点击返回
         //cs_click(2, '#243db3', 0.8, 0.7, 0.1, 0.2)
-        let no_image = find_images(6, './img/返回领积分按钮-.jpg')
-        if (!no_image)
-            click_bounds(952, 1632, 1078, 1770) //识别不到图片就硬性点击按钮位置
+        if (undefined != close) {
+            let no_image = find_images(6, './img/返回领积分按钮-.jpg')
+            if (!no_image)
+                click_bounds(952, 1632, 1078, 1770) //识别不到图片就硬性点击按钮位置
+        }
         sleep(2000)
     }
     if (close != undefined)
@@ -450,6 +455,9 @@ function diantao_task() {
     app.launch('com.taobao.live')
     sleep(5000)
     //click_by_id('hp3_tab_img')
+    //每天第一次进入app ，有个青少年模式提示，点击任意地方会关闭这个弹层提示
+    find_images(3, './img/元宝中心按钮.jpg', undefined, true)
+    sleep(500)
     find_images(3, './img/元宝中心按钮.jpg', undefined, true)
     sleep(3000)
     //每日收益
@@ -497,6 +505,13 @@ function get_remaining() {
                 console.log('领取奖励')
                 element.click()
                 view_live()
+                sleep(1000)
+                //进入了视频列表页面
+                if (!id('taolive_close_btn').exists()) {
+                    className('android.view.View').depth(25).indexInParent(1).findOne().click()
+                    sleep(1000)
+                    //click_by_text('观看')
+                }
                 throw new Error()
             }
             if (re.exec(element.text())) {
@@ -504,6 +519,7 @@ function get_remaining() {
                 throw new Error()
             }
         });
+        return -1 //没找到领奖标识，返回-1 
     } catch (e) { }
     console.log('领奖剩余时间：' + remaining)
     return remaining
@@ -523,6 +539,8 @@ function diantao_yuanbao() {
         remaining = get_remaining()
         if (remaining == 0)
             remaining = get_remaining()
+        else if (remaining == -1)
+            break //没找到领奖标志，就退出
         else {
             let start = Date.parse(new Date()) / 1000  //开始计时
 
@@ -530,11 +548,12 @@ function diantao_yuanbao() {
             if (!id('taolive_close_btn').exists()) {
                 className('android.view.View').depth(25).indexInParent(1).findOne().click()
                 sleep(1000)
-                click_by_text('观看')
+                //click_by_text('观看')
             }
             ii = 0
             jj = 0
             console.log('jj:' + jj + 'ii:' + ii)
+
             while (Date.parse(new Date()) / 1000 - start <= remaining) {
 
                 if (id('gold_egg_image').exists() && jj == 0) {
@@ -570,6 +589,10 @@ function diantao_yuanbao() {
 
                 //关闭广告弹层
                 click_by_text('O1CN0157Hhvw1cdq2jrQoth_!!6000000003624-2-tps-72-72')
+
+                //判断还有没有元宝中心按钮
+                if (!id('gold_progress_bar').exists())
+                    break
             }
             if (null != thread_egg)
                 thread_egg.interrupt()
