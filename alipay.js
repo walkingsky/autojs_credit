@@ -720,7 +720,9 @@ ui.btn_run_main.click(function () {
         toast_console('当前程序正在执行其他任务,请结束后再运行', true); return
     }
     thread = threads.start(function () {
+        console.log('支付宝任务')
         main(1); //exit()
+        //thread.interrupt()
     })
 })
 
@@ -729,7 +731,9 @@ ui.btn_diantao_signin.click(function () {
         toast_console('当前程序正在执行其他任务,请结束后再运行', true); return
     }
     thread = threads.start(function () {
+        console.log('点淘签到')
         main(2); //exit()
+        //thread.interrupt()
     })
 })
 
@@ -738,7 +742,9 @@ ui.btn_diantao_yuanbao.click(function () {
         toast_console('当前程序正在执行其他任务,请结束后再运行', true); return
     }
     thread = threads.start(function () {
+        console.log('点淘刷元宝')
         main(3); //exit()
+        //thread.interrupt()
     })
 })
 
@@ -747,6 +753,7 @@ ui.btn_run_signin.click(function () {
         toast_console('当前程序正在执行其他任务,请结束后再运行', true); return
     }
     thread = threads.start(function () {
+        console.log('签到')
         requestScreenCapture(false);
         //多点签到
         if (ui.ck_duodian_signin.checked) {
@@ -765,6 +772,7 @@ ui.btn_run_signin.click(function () {
         sleep(2000)
         toast_console('###***全部签到执行完毕***###');
         //exit()
+        //thread.interrupt()
     })
 })
 
