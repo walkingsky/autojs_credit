@@ -6,7 +6,7 @@ auto()
 
 requestScreenCapture(false)
 //设置查找颜色的区域
-var rangPoint = [294, 690, 366, 760]
+var rangPoint = [255, 1195, 350, 1296]
 
 function getColor() {
     let img = captureScreen()
@@ -19,6 +19,7 @@ function getColor() {
             if (null != point) {
                 //console.log(point)
                 if (point.x == i && point.y == j) {
+                    console.log(point)
                     console.log('找到了颜色值：' + colors.toString(pColor))
                     return
                 }

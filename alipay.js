@@ -150,7 +150,7 @@ function view(title, num, close) {
         //按照返回按钮的颜色点击返回
         //cs_click(2, '#243db3', 0.8, 0.7, 0.1, 0.2)
         if (undefined != close) {
-            let no_image = find_images(6, './img/返回领积分按钮-.jpg')
+            let no_image = find_images(6, './img/返回领积分按钮.jpg', undefined, true)
             if (!no_image)
                 click_bounds(952, 1632, 1078, 1770) //识别不到图片就硬性点击按钮位置
         }
@@ -176,7 +176,7 @@ function do_task(title) {
     sleep(1000)
     //按照返回按钮的颜色点击返回
     //cs_click(2, '#243db3', 0.8, 0.4, 0.9, 0.8)
-    let no_image = find_images(6, './img/返回领积分按钮-.jpg')
+    let no_image = find_images(6, './img/返回领积分按钮.jpg', undefined, true)
     if (!no_image)
         click_bounds(952, 1632, 1078, 1770) //识别不到图片就硬性点击按钮位置
 
@@ -235,7 +235,7 @@ function alipay_points() {
         do_task('逛淘金币小镇领金币')
         sleep(3000)
         app.launch("com.eg.android.AlipayGphone")  //从淘宝切回支付宝
-        let no_image = find_images(6, './img/返回领积分按钮-.jpg')
+        let no_image = find_images(6, './img/返回领积分按钮.jpg', undefined, true)
         //sleep(2000)
         //if (!no_image)
         //    click_bounds(952, 1632, 1078, 1770) //识别不到图片就硬性点击按钮位置
@@ -333,7 +333,6 @@ function baba_farm_task() {
 function paopao() {
     for (let i = 0; i < 5; i++)
         find_images(3, './img/大气泡color.jpg', undefined, true)
-    //find_images(3, './img/大气泡-.jpg', undefined, undefined, 0.4)
 }
 
 function ant_forest_task() {
@@ -342,7 +341,7 @@ function ant_forest_task() {
     click_by_text('蚂蚁森林')
     sleep(3000)
     paopao()
-    find_images(3, './img/小气泡.jpg')
+    find_images(3, './img/小气泡.jpg', undefined, true)
     sleep(1000)
     let a = find_images(3, './img/保护地.jpg')
     if (!a) //如果没找到图片就直接点击位置
@@ -426,7 +425,7 @@ function taobao_farm_task() {
 function view_live() {
     let live = click_by_textcontains('看直播60秒') //看直播的按钮
     sleep(1000)
-    if (live == true) {
+    if (live) {
         while (true) {
             //if (id('gold_egg_image').exists()) { click_by_id('gold_egg_image'); console.log('点击金蛋领奖') }
             //翻倍操作
@@ -498,6 +497,7 @@ function get_remaining() {
     console.log('获取领奖剩余时间')
     let remaining = 0
     let a = className('android.view.View').depth(28).indexInParent(1).find()
+    console.log(a.length)
     try {
         var re = /\d{2}:\d{2}:\d{2}/
         a.forEach(element => {
@@ -506,12 +506,6 @@ function get_remaining() {
                 element.click()
                 view_live()
                 sleep(1000)
-                //进入了视频列表页面
-                if (!id('taolive_close_btn').exists()) {
-                    className('android.view.View').depth(25).indexInParent(1).findOne().click()
-                    sleep(1000)
-                    //click_by_text('观看')
-                }
                 throw new Error()
             }
             if (re.exec(element.text())) {
@@ -520,7 +514,9 @@ function get_remaining() {
             }
         });
         return -1 //没找到领奖标识，返回-1 
-    } catch (e) { }
+    } catch (e) {
+        console.log(e.msg)
+    }
     console.log('领奖剩余时间：' + remaining)
     return remaining
 }
@@ -533,22 +529,32 @@ function diantao_yuanbao() {
     sleep(5000)
     //click_by_id('hp3_tab_img')
     find_images(3, './img/元宝中心按钮.jpg', undefined, true)
-    sleep(3000)
-
+    sleep(4000)
+    let retry_count = 6
     while (true) {
         remaining = get_remaining()
         if (remaining == 0)
             remaining = get_remaining()
-        else if (remaining == -1)
-            break //没找到领奖标志，就退出
+        else if (remaining == -1) {
+            retry_count--
+            sleep(1000)
+            if (retry_count < 0)
+                break //没找到领奖标志，就退出
+        }
         else {
             let start = Date.parse(new Date()) / 1000  //开始计时
 
             //返回视频列表
             if (!id('taolive_close_btn').exists()) {
-                className('android.view.View').depth(25).indexInParent(1).findOne().click()
+                if (className('android.view.View').depth(25).indexInParent(1).findOne())
+                    className('android.view.View').depth(25).indexInParent(1).findOne().click()
+                /*
                 sleep(1000)
-                //click_by_text('观看')
+                if (className('android.widget.FrameLayout').depth(23).indexInParent(1).findOne())
+                    className('android.widget.FrameLayout').depth(23).indexInParent(1).findOne().click()
+                */
+                sleep(1000)
+                click_by_text('观看')
             }
             ii = 0
             jj = 0
