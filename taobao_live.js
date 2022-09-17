@@ -142,8 +142,8 @@ tao_live.diantao_yuanbao = function () {
         _common_Fuction.toast_console('没找到元宝中心按钮，点淘已关闭领元宝');
         return;
     }
-    sleep(4000)
-    let retry_count = 6
+    sleep(4000);
+    let retry_count = 6;
     while (true) {
         remaining = get_remaining();
         if (remaining == 0)
@@ -215,7 +215,11 @@ tao_live.diantao_yuanbao = function () {
                 clearTimeout(thread_egg_id);
             if (null != thread_swipe_id)
                 clearTimeout(thread_swipe_id);
-            _common_Fuction.click_by_id('gold_progress_bar');
+
+            if (idContains('taolive_close_btn').exists() && !idContains('gold_progress_bar').exists())
+                _common_Fuction.click_by_id('taolive_close_btn');
+            else
+                _common_Fuction.click_by_id('gold_progress_bar');
             sleep(500);
             if (id('gold_egg_image').exists()) //防止点击到领取满蛋积分，而不能进入元宝中心的操作
                 id('gold_egg_image').click();

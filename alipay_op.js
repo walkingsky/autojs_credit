@@ -69,6 +69,7 @@ function do_task(title) {
 
 // 支付宝领积分的操作函数
 auto_alipay.alipay_points = function () {
+    _common_Fuction.toast_console('支付宝积分领取任务开始执行');
     app.launch("com.eg.android.AlipayGphone");
     sleep(5000);
     let my_btn = text('我的').findOne(5000);
@@ -129,7 +130,7 @@ auto_alipay.alipay_points = function () {
     _common_Fuction.click_by_text('首页');
     sleep(2000);
 
-    _common_Fuction.toast_console('执行结束');
+    _common_Fuction.toast_console('支付宝积分领取任务执行结束');
 }
 //-------------芭芭农场 -----------------------------------
 //领取奖励
@@ -148,6 +149,7 @@ function farm_view() {
 }
 
 auto_alipay.baba_farm_task = function () {
+    _common_Fuction.toast_console('芭芭农场任务开始执行');
     app.launch("com.eg.android.AlipayGphone");
     sleep(5000);
     _common_Fuction.click_by_text('芭芭农场');
@@ -198,6 +200,7 @@ auto_alipay.baba_farm_task = function () {
     }
     //关闭，退出
     _common_Fuction.click_by_desc('关闭');
+    _common_Fuction.toast_console('芭芭农场任务执行结束');
 }
 
 // -------蚂蚁森林-------------------
@@ -205,8 +208,26 @@ function paopao() {
     for (let i = 0; i < 5; i++)
         _common_Fuction.find_images(3, './img/大气泡color.jpg', undefined, true);
 }
+//蚂蚁森林的任务
+function do_forest_task() {
+    if (textContains('观看视频').exists()) {
+        var video = _common_Fuction.click_by_text('观看视频');
+        if (video) {
+            sleep(2000);
+            _common_Fuction.click_by_desc('返回');
+        }
+    }
+    if (textContains('追寻踪迹').exists()) {
+        var have = _common_Fuction.click_by_text('追寻踪迹');
+        if (have) {
+            sleep(2000);
+            _common_Fuction.click_by_desc('继续前进');
+        }
+    }
+}
 
 auto_alipay.ant_forest_task = function () {
+    _common_Fuction.toast_console('蚂蚁森林任务开始执行');
     app.launch("com.eg.android.AlipayGphone");
     sleep(5000);
     _common_Fuction.click_by_text('蚂蚁森林');
@@ -218,23 +239,21 @@ auto_alipay.ant_forest_task = function () {
     if (!a) //如果没找到图片就直接点击位置
         _common_Fuction.click_bounds(80, 1230, 200, 1370);
     sleep(2000);
-    _common_Fuction.click_by_textcontains('开始巡护');
-    sleep(3000);
-    //视频
-    _common_Fuction.click_by_text('不看了，继续前进');
-    _common_Fuction.click_by_text('观看视频');
-    //继续前进
-    _common_Fuction.click_by_text('继续前进');
-    //加好友
-    let friend = text('邀请好友得巡护机会').findOne(5000);
-    if (friend)
-        _common_Fuction.click_bounds(504, 1467, 576, 1542);
 
-    //关闭，退出
-    _common_Fuction.click_by_desc('关闭');
+    while (textContains('开始巡护').exists()) {
+        _common_Fuction.click_by_textcontains('开始巡护');
+        sleep(6000);
+        do_forest_task();
+        sleep(4000);
+        if (textContains('继续前进').exists())
+            _common_Fuction.click_by_text('继续前进');
+    }
     _common_Fuction.sleep(2000);
     //关闭，退出
     _common_Fuction.click_by_desc('关闭');
+    _common_Fuction.toast_console('蚂蚁森林任务执行结束');
+
 }
+
 
 module.exports = auto_alipay;
