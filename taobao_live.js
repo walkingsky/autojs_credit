@@ -61,11 +61,7 @@ tao_live.diantao_sign = function () {
         _common_Fuction.click_bounds(0, 84, 123, 213);
     }
     sleep(1000);
-    //领取奖励
-    //_common_Fuction.click_by_text('领取奖励');
-    //sleep(500);
-    //view_live();
-    //sleep(1000);
+    //签到
     sign();
     sleep(1000);
     //click_by_text('text = O1CN01LxFPWH1Mmy2hurJW4_!!6000000001478-2-tps-54-54.png_') //关闭弹层按钮
@@ -77,6 +73,8 @@ tao_live.diantao_sign = function () {
     if (textContains('看60秒直播才能提现')) {
         _common_Fuction.click_by_text('看直播');
         view_live();
+        sleep(1000);
+        _common_Fuction.click_by_text('提现到支付宝');
     }
     _common_Fuction.click_by_text('确认提现');
     sleep(2000);

@@ -45,6 +45,9 @@ ui.layout(
                             <button id="btn_run_main" text="执行选中任务" />
                             <button id="btn_exit" text="退出" />
                             <button id="btn_log" text="显示控制台log" />
+                            <horizontal>
+                                <checkbox text="显示调试信息" id="show_debug" checked='false' />
+                            </horizontal>
                         </vertical>
                     </scroll>
                 </frame>
@@ -91,7 +94,7 @@ ui.btn_diantao_signin.click(function () {
     thread = threads.start(function () {
         //抓屏权限
         requestScreenCapture(false);
-        tao_live.debug(true);
+        tao_live.debug(ui.show_debug.checked)
         tao_live.diantao_sign();
         _common_Fuction.toast_console('点淘签到任务完成');
         return;
@@ -110,7 +113,7 @@ ui.btn_diantao_yuanbao.click(function () {
     thread = threads.start(function () {
         //抓屏权限
         requestScreenCapture(false);
-        tao_live.debug(true);
+        tao_live.debug(ui.show_debug.checked)
         tao_live.diantao_yuanbao();
         _common_Fuction.toast_console('点淘刷元宝脚本完成');
         return;
@@ -128,7 +131,7 @@ ui.btn_run_signin.click(function () {
     thread = threads.start(function () {
         //抓屏权限
         requestScreenCapture(false);
-        sign_in.debug(true);
+        sign_in.debug(ui.show_debug.checked);
         _common_Fuction.toast_console('签到');
         //多点签到
         if (ui.ck_duodian_signin.checked) {
@@ -163,7 +166,7 @@ ui.btn_run_main.click(function () {
         //抓屏权限
         requestScreenCapture(false);
 
-        auto_alipay.debug(true);
+        auto_alipay.debug(ui.show_debug.checked);
 
         if (ui.ck_points_task.checked) {
             auto_alipay.alipay_points();

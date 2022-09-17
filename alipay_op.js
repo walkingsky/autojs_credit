@@ -109,6 +109,8 @@ auto_alipay.alipay_points = function () {
         sleep(2000);
         view('15s逛一逛商品橱窗', 1);
         sleep(2000);
+        do_task('逛淘票票领红包');
+        sleep(2000);
         do_task('逛一逛芭芭农场');
         sleep(2000);
         do_task('逛一逛蚂蚁森林');
@@ -248,7 +250,7 @@ auto_alipay.ant_forest_task = function () {
         if (textContains('继续前进').exists())
             _common_Fuction.click_by_text('继续前进');
     }
-    _common_Fuction.sleep(2000);
+    sleep(2000);
     //关闭，退出
     _common_Fuction.click_by_desc('关闭');
     _common_Fuction.toast_console('蚂蚁森林任务执行结束');
