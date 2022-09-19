@@ -25,6 +25,7 @@ sign_in.duodian_signin = function () {
         sleep(500);
         i++
     }
+    sleep(1000);
     _common_Fuction.click_by_text('bdbb222e-ecbe-4bb5-bd42-ce7b93013fd4');
     _common_Fuction.toast_console('多点签到完成')
 }

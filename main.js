@@ -43,7 +43,7 @@ ui.layout(
                             <checkbox text="支付宝会员积分" id="ck_points_task" checked='true' />
                             <checkbox text="支付宝芭芭农场" id="ck_farm_task" checked='true' />
                             <checkbox text="支付宝蚂蚁森林" id="ck_forest_task" checked='true' />
-                            <checkbox text="淘宝芭芭农场" id="ck_taobao_farm" checked='true' />
+                            <checkbox text="*淘宝芭芭农场" id="ck_taobao_farm" checked='true' />
                             <button id="btn_run_main" text="执行选中任务" />
                             <button id="btn_exit" text="退出" />
                             <button id="btn_log" text="显示控制台log" />

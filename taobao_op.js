@@ -10,8 +10,11 @@ auto_taobao.debug = function (debug) {
     _common_Fuction.debug = debug;
 }
 //上划屏幕
-function my_swipe() {
-    swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 700);
+function my_swipe(down) {
+    if (undefined == down)
+        swipe(device.width / 2, device.height * 0.8, device.width / 2, device.height * 0.5, 500);
+    else
+        swipe(device.width / 2, device.height * 0.5, device.width / 2, device.height * 0.9, 500);
 }
 //浏览15秒
 function view(title) {
@@ -20,10 +23,19 @@ function view(title) {
         return;
     sleep(2000);
     my_swipe();
-    while (!textContains('浏览完成').exists()) {
+    let i = 0;
+    while (!(textContains('浏览完成').exists() || textContains('任务已经全部完成').exists()) && i < 15) {
         sleep(1000);
+        i++;
     }
-    _common_Fuction.click_by_text('返回');
+    if (textContains('返回').exists()) {
+        _common_Fuction.click_by_text('返回');
+        return;
+    } else if (idContains('back_Layout'))
+        _common_Fuction.click_by_id('back_Layout');
+    else
+        _common_Fuction.click_by_desc('转到上一层级');
+
 }
 function do_task(title) {
     let have = _common_Fuction.click_by_text(title);
@@ -38,8 +50,9 @@ function search() {
     if (have === false)
         return;
     sleep(2000);
-    let search_key = className('android.view.View').depth(11).indexInParent(0).findOne();
+    let search_key = className('android.view.View').depth(12).indexInParent(0).findOne();
     search_key.click();
+    sleep(1000);
     my_swipe();
     let i = 0;
     while (!textContains('当前页下单').exists() || i < 16) {
@@ -53,7 +66,7 @@ function search() {
     else {
         className('android.widget.Button').depth(13).indexInParent(0).findOne().click();
         sleep(1000);
-        className('android.view.View').depth(10).indexInParent(0).findOne().click();
+        className('android.view.View').depth(9).indexInParent(3).findOne().click();
     }
 
 }
@@ -70,8 +83,9 @@ auto_taobao.farm = function () {
     open_app();
     //领肥料
     _common_Fuction.my_click(880, 1500);
-    //未完成。。。
-    sleep(1000);
+    if (textContains('提醒我').exists())
+        _common_Fuction.click_by_text('关闭');
+    sleep(2000);
     //按时领取
     _common_Fuction.my_click(230, 1570);
     sleep(500);
@@ -84,13 +98,19 @@ auto_taobao.farm = function () {
         //集肥料
         className('android.widget.Image').clickable(true).depth(13).indexInParent(2).findOne().click();
         sleep(1000);
+        my_swipe('down');
+        sleep(2000);
         for (let j = 0; j < 2; j++) {
+            _common_Fuction.click_by_text('去签到');
+            sleep(1000);
             view('逛精选好物(0/1)');
             sleep(1000)
             //搜心仪的宝贝
             search();
             sleep(1000);
             view('逛精选好货(0/1)');
+            sleep(1000);
+            view('浏览店铺有好礼(0/1)');
             sleep(1000);
             do_task('去蚂蚁庄园领饲料喂鸡(0/1)');
             sleep(1000);
@@ -100,18 +120,21 @@ auto_taobao.farm = function () {
             sleep(1000);
             do_task('逛逛支付宝芭芭农场(0/1)');
             sleep(1000);
-            my_swipe();
+            _common_Fuction.click_by_text('去领取');
             sleep(1000);
+            my_swipe();
+            sleep(2000);
         }
         _common_Fuction.click_by_text('关闭');
         sleep(500);
     }
-    _common_Fuction.click_by_text('去领取');
-    sleep(1000);
+
     _common_Fuction.click_by_text('关闭');
     sleep(500);
     while (true) {
         _common_Fuction.my_click(540, 2000);
+        sleep(1000);
+        my_swipe('down');
         sleep(1000);
         if (textContains('农场百科问答(0/1)').exists())
             break;
@@ -122,8 +145,8 @@ auto_taobao.farm = function () {
     }
     _common_Fuction.click_by_text('关闭');
     sleep(2000);
-    //className('android.widget.Image').depth(15).indexInParent(0).findOne().click();
-    _common_Fuction.my_click(76, 167);
+    className('android.widget.Image').depth(15).indexInParent(0).findOne().click();
+    //_common_Fuction.my_click(76, 167);
     return;
 }
 
