@@ -40,7 +40,7 @@ sign_in.jd_signin = function () {
     sleep(3000);
     //click_by_text('领京豆')  //第一次打开京东，会找不到这个text按钮，换用图片查找
     _common_Fuction.find_images(3, './img/领京豆按钮.jpg', undefined, true);
-    sleep(2000);
+    sleep(3000);
     _common_Fuction.click_by_textcontains('签到领');
 
     _common_Fuction.toast_console('京东签到完成');

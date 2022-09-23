@@ -230,10 +230,14 @@ function do_forest_task() {
         var have = _common_Fuction.click_by_text('追寻踪迹');
         if (have) {
             sleep(2000);
+            if (textContains('立即合成').exists()) {
+                _common_Fuction.click_by_textcontains('立即合成');
+            }
             _common_Fuction.click_by_desc('继续前进');
         }
     }
-
+    if (textContains('获得拼图奖励').exists())
+        _common_Fuction.click_by_textcontains('获得拼图奖励');
 }
 
 auto_alipay.ant_forest_task = function () {
