@@ -146,58 +146,20 @@ else {
     exit()
 }
 sleep(500)
+//直接点击坐标点，进入“基金”
 click(770, 1150)
 
 textContains('交易记录').waitFor()
 textContains('交易记录').click()
-
-
-/*
-//这种翻页的方式比较慢
-var i = 0
-var records = null
-var j = 0
-do {
-    //翻页，1850 为一页（5条记录，每条370）的高度
-    records = className('android.view.View').depth(17).find()
-    console.log(records.length)
-    i = records.length
-
-    for (let n = 0; n < 5; n++, j++) {
-        let temp = className('android.view.View').depth(15).find()
-        temp[1].child(0).child(j).click()
-        textContains('记录详情').waitFor()
-        sleep(1000)
-        if (textContains('分红信息').exists()) {
-            console.log('分红信息')
-        } else if (textContains('买入信息').exists()) {
-            console.log('买入信息')
-            if (textContains('受理失败').exists())
-                console.log('受理失败')
-        } else if (textContains('卖出信息').exists()) {
-            console.log('卖出信息')
-        } else if (textContains('转出基金').exists()) {
-            console.log('基金转换')
-        } else if (textContains('增加份额').exists()) {
-            console.log('增加份额')
-        }
-        desc('返回').click()
-        sleep(3000)
-    }
-    swipe(device.width * 0.5, device.height * 0.9, device.width * 0.5, device.height * 0.9 - 1850, 700)
-    sleep(500)
-
-} while (i < 100)
-
-*/
+sleep(3000)
 
 //提前翻到最大页数
 var records = null
 do {
-    var records = className('android.view.View').depth(15).find()
+    var records = className('android.view.View').depth(15).indexInParent(0).find()
     swipe(device.width * 0.5, device.height * 0.9, device.width * 0.5, 100, 300)
     sleep(100)
-} while (records[1].child(0).childCount() < 305)
+} while (records[0].child(0).childCount() < 305)
 
 
 var csv_str = ''
