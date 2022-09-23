@@ -157,7 +157,7 @@ function zengjiafene() {
     return str
 }
 
-/*
+
 sleep(4000)
 
 if (textContains('资产').exists())
@@ -170,7 +170,7 @@ else {
 sleep(500)
 //直接点击坐标点，进入“基金”
 click(770, 1150)
-*/
+
 textContains('交易记录').waitFor()
 textContains('交易记录').click()
 sleep(3000)
@@ -187,7 +187,7 @@ do {
 var csv_str = '基金名称,交易日期,交易类型,份额,单位净值,交易金额,手续费,转出退回金额'
 //files.write("/sdcard/基金交易记录.csv", csv_str)
 
-for (let n = 175; n < records[0].child(0).childCount(); n++) {
+for (let n = 0; n < records[0].child(0).childCount(); n++) {
     records[0].child(0).child(n).click()
     textContains('记录详情').waitFor()
     sleep(1000)
