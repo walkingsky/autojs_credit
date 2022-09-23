@@ -162,11 +162,11 @@ do {
 } while (records[0].child(0).childCount() < 305)
 
 
-var csv_str = ''
+var csv_str = '基金名称,交易日期,交易类型,份额,单位净值,交易金额,手续费,转出退回金额'
 //files.write("/sdcard/基金交易记录.csv", csv_str)
 
-for (let n = 252; n < records[1].child(0).childCount(); n++) {
-    records[1].child(0).child(n).click()
+for (let n = 0; n < records[0].child(0).childCount(); n++) {
+    records[0].child(0).child(n).click()
     textContains('记录详情').waitFor()
     sleep(1000)
     if (textContains('分红信息').exists()) {
