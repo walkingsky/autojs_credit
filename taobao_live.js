@@ -51,7 +51,7 @@ tao_live.diantao_sign = function () {
     app.launch('com.taobao.live');
     sleep(5000);
     //每天第一次进入app ，有个青少年模式提示，点击任意地方会关闭这个弹层提示
-    if (textContains('青少年守护模式'))
+    if (textContains('青少年守护模式').exists())
         _common_Fuction.click_by_id('tv_teenager_close');
     _common_Fuction.find_images(3, './img/元宝中心按钮.jpg', undefined, true);
     sleep(3000);
@@ -70,7 +70,7 @@ tao_live.diantao_sign = function () {
     sleep(2000);
     _common_Fuction.click_by_text('提现到支付宝');
     sleep(2000);
-    if (textContains('看60秒直播才能提现')) {
+    if (textContains('看60秒直播才能提现').exists()) {
         _common_Fuction.click_by_text('看直播');
         view_live();
         sleep(1000);
@@ -133,7 +133,7 @@ tao_live.diantao_yuanbao = function () {
     let remaining = 0 //领奖剩余时间，单位秒
     app.launch('com.taobao.live')
     sleep(5000)
-    if (textContains('青少年守护模式'))
+    if (textContains('青少年守护模式').exists())
         _common_Fuction.click_by_id('tv_teenager_close');
     let yuanbao = _common_Fuction.find_images(3, './img/元宝中心按钮.jpg', undefined, true);
     if (yuanbao === false) {
@@ -222,7 +222,7 @@ tao_live.diantao_yuanbao = function () {
             if (id('gold_egg_image').exists()) //防止点击到领取满蛋积分，而不能进入元宝中心的操作
                 id('gold_egg_image').click();
             sleep(500);
-            if (textContains('悬浮窗'))
+            if (textContains('悬浮窗').exists())
                 _common_Fuction.click_by_id('positive');
             sleep(3000);
         }

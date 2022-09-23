@@ -11,6 +11,7 @@ var tao_live = require('./taobao_live.js');
 var _common_Fuction = require('./common.js');
 var sign_in = require('./signin.js');
 var auto_alipay = require('./alipay_op.js');
+var auto_taobao = require('./taobao_op');
 
 //线程执行其任务
 var thread = null;
@@ -42,6 +43,7 @@ ui.layout(
                             <checkbox text="支付宝会员积分" id="ck_points_task" checked='true' />
                             <checkbox text="支付宝芭芭农场" id="ck_farm_task" checked='true' />
                             <checkbox text="支付宝蚂蚁森林" id="ck_forest_task" checked='true' />
+                            <checkbox text="*淘宝芭芭农场" id="ck_taobao_farm" checked='true' />
                             <button id="btn_run_main" text="执行选中任务" />
                             <button id="btn_exit" text="退出" />
                             <button id="btn_log" text="显示控制台log" />
@@ -167,6 +169,7 @@ ui.btn_run_main.click(function () {
         requestScreenCapture(false);
 
         auto_alipay.debug(ui.show_debug.checked);
+        auto_taobao.debug(ui.show_debug.checked);
 
         if (ui.ck_points_task.checked) {
             auto_alipay.alipay_points();
@@ -176,6 +179,8 @@ ui.btn_run_main.click(function () {
         }
         if (ui.ck_forest_task.checked)
             auto_alipay.ant_forest_task();
+        if (ui.ck_taobao_farm.checked)
+            auto_taobao.farm();
 
         return;
     })

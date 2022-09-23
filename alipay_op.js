@@ -58,13 +58,20 @@ function do_task(title) {
         _common_Fuction.btn_position_click(my_btn);
     sleep(5000);
     //重新激活 支付宝
-    app.launch("com.eg.android.AlipayGphone");
-    sleep(1000)
-    if (descContains('返回').exists())
-        _common_Fuction.click_by_desc('返回');
-    else if (descContains('关闭').exists())
-        _common_Fuction.click_by_desc('关闭');
-
+    for (let i = 1; i < 6; i++) {
+        app.launch("com.eg.android.AlipayGphone");
+        sleep(1000)
+        if (descContains('返回').exists()) {
+            _common_Fuction.click_by_desc('返回');
+            return;
+        }
+        else if (descContains('关闭').exists()) {
+            _common_Fuction.click_by_desc('关闭');
+            return;
+        }
+        _common_Fuction.toast_console('没找到关闭按钮');
+    }
+    return;
 }
 
 // 支付宝领积分的操作函数
@@ -223,9 +230,14 @@ function do_forest_task() {
         var have = _common_Fuction.click_by_text('追寻踪迹');
         if (have) {
             sleep(2000);
+            if (textContains('立即合成').exists()) {
+                _common_Fuction.click_by_textcontains('立即合成');
+            }
             _common_Fuction.click_by_desc('继续前进');
         }
     }
+    if (textContains('获得拼图奖励').exists())
+        _common_Fuction.click_by_textcontains('获得拼图奖励');
 }
 
 auto_alipay.ant_forest_task = function () {
@@ -253,6 +265,8 @@ auto_alipay.ant_forest_task = function () {
     sleep(2000);
     //关闭，退出
     _common_Fuction.click_by_desc('关闭');
+    if (textContains('点击开启').exists())
+        _common_Fuction.click_by_desc('关闭');
     _common_Fuction.toast_console('蚂蚁森林任务执行结束');
 
 }

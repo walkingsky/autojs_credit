@@ -13,6 +13,14 @@ common.toast_console = function (msg) {
     if (this.debug)
         toast(msg);
 }
+//按照转换后的坐标点点击
+//myx:按照自己手机屏幕获取的点击点的x坐标
+//myy:按照自己手机屏幕获取的点击点的y坐标
+common.my_click = function (myx, myy) {
+    let x = parseInt(myx / 1080 * device.width);
+    let y = parseInt(myy / 2160 * device.height);
+    click(x, y);
+}
 //点击控件所在坐标
 common.btn_position_click = function (x) {
     if (x)
