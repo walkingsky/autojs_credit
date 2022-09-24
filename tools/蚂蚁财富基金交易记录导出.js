@@ -147,9 +147,9 @@ function zengjiafene() {
     str = str + ',' // 代码
     str = str + riqi(texts.child(11).text()) + ',' //交易日期
     str = str + '增强,' //买卖方向
-    str = str + '0,' //份额
+    str = str + jine(texts.child(9).text()) + ',' //份额
     str = str + '0,' //单位净值
-    str = str + jine(texts.child(9).text()) + ',' //交易金额
+    str = str + '0,' //交易金额
     str = str + '0,' //手续费
     str = str + "0\n" //退回金额
 
@@ -184,7 +184,7 @@ do {
 } while (records[0].child(0).childCount() < 305)
 
 
-var csv_str = '基金名称,交易日期,交易类型,份额,单位净值,交易金额,手续费,转出退回金额'
+var csv_str = "基金名称,交易日期,交易类型,份额,单位净值,交易金额,手续费,转出退回金额\n"
 //files.write("/sdcard/基金交易记录.csv", csv_str)
 
 for (let n = 0; n < records[0].child(0).childCount(); n++) {
