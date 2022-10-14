@@ -137,6 +137,62 @@ appElement.zouluduck.zhuanbushu = function () {
     //喝水任务
     this.drink();
 
+    //看黄金8点档直播3分钟
+    try {
+        while (true) {
+            let kanhuangjin8 = textContains('看黄金8点档直播3分钟').findOne(3000);
+            if (!kanhuangjin8)
+                break;
+            _common_Fuction.toast_console('看黄金8点档直播3分钟:' + kanhuangjin8.parent().child(5).text());
+            if (kanhuangjin8.parent().child(5).text() == '去完成') {
+                kanhuangjin8.click();
+                //看视频，完成后，并返回
+                view();
+                sleep(3000);
+                //重新打开任务列表
+                let temp = text(zhanbushu_button_text).findOne(5000);
+                if (temp)
+                    temp.click();
+
+            } else {
+                break;
+            }
+        }
+    } catch (error) {
+        _common_Fuction.toast_console('看视频60秒:' + error);
+    }
+
+    //喝水任务
+    this.drink();
+
+    //看晚间惊喜视频60秒
+    try {
+        while (true) {
+            let kanwanjianshipin = textContains('看晚间惊喜视频60秒').findOne(3000);
+            if (!kanwanjianshipin)
+                break;
+            _common_Fuction.toast_console('看晚间惊喜视频60秒:' + kanwanjianshipin.parent().child(5).text());
+            if (kanwanjianshipin.parent().child(5).text() == '去完成') {
+                kanwanjianshipin.click();
+                //看视频，完成后，并返回
+                view();
+                sleep(3000);
+                //重新打开任务列表
+                let temp = text(zhanbushu_button_text).findOne(5000);
+                if (temp)
+                    temp.click();
+
+            } else {
+                break;
+            }
+        }
+    } catch (error) {
+        _common_Fuction.toast_console('看视频60秒:' + error);
+    }
+
+    //喝水任务
+    this.drink();
+
     //浏览好货卖场30秒
     try {
         let liulanhaohuo = textContains('浏览好货卖场30秒').findOne(2000);
