@@ -116,6 +116,8 @@ app_taolive.kanzhibo = function () {
                             if (id('gold_egg_image').depth(6).indexInParent(1).exists()) {
                                 id('gold_egg_image').depth(6).indexInParent(1).findOne().parent().parent().click();
                                 _common_Fuction.toast_console('点击金蛋领奖');
+                            } else {
+                                _common_Fuction.toast_console('划屏自动领奖');
                             }
                             thread_egg_id = null;
                             if (null != thread_egg) {
@@ -137,6 +139,61 @@ app_taolive.kanzhibo = function () {
         _common_Fuction.toast_console('看直播，赚元宝:' + error);
     }
     _common_Fuction.toast_console('完成看直播，赚元宝');
+}
+
+/**
+ * 赚步数；领取步数奖励（从元宝中心开始）
+ */
+app_taolive.zouluduck.lingbushu = function (second) {
+    var zhanbushu_button_text = 'O1CN01IeRzpJ1hSSJ53VxuH_!!6000000004276-2-tps-116-132.png_';
+    textContains('走路赚元宝').findOne(3000).click();
+    let temp = textContains(zhanbushu_button_text).findOne(5000);
+    if (!temp && second == undefined) {
+        _common_Fuction.toast_console('赚步数函数：没有找到赚步数按钮，返回');
+        return;
+    }
+    _common_Fuction.toast_console('进入领取步数奖励');
+    try { //出发按钮
+        let chufa_button = text('出发').depth(18).indexInParent(2).findOne();
+        if (chufa_button) {
+            chufa_button.parent().click();
+            sleep(5000);
+            //点击空白，关闭可能打开的任务列表
+            click(150, 300);
+            if (text('O1CN012FPExu1acnrUXXUgf_!!6000000003351-2-tps-120-120.png_').exists())
+                text('O1CN012FPExu1acnrUXXUgf_!!6000000003351-2-tps-120-120.png_').findOne().click();
+            let yuanbao = textContains('88元宝').depth(16).find();
+            let did = false;
+            yuanbao.forEach(element => {
+                element.click();
+                sleep(2000);
+                let zhibo = textContains('看直播60秒得').findOne(3000);
+                if (zhibo) {
+                    view_live();
+                    did = true;
+                } else {
+                    _common_Fuction.toast_console('点击了无法领取的元宝:' + element.text());
+                }
+            });
+            //没领到就再做一次
+            if (did == false && second == undefined) {
+
+                sleep(2000);
+                //退出到元宝中心
+                className('android.view.View').depth(16).indexInParent(1).findOne(2000).click();
+                sleep(2000);
+                _common_Fuction.toast_console('没能正常领取，再试一遍');
+                this.lingbushu(true);
+            }
+
+
+        }
+        //点击返回按钮，退出到元宝中心
+        className('android.view.View').depth(16).indexInParent(1).findOne(2000).click();
+    } catch (error) {
+        _common_Fuction.toast_console('领取步数奖励error:' + error);
+    }
+    _common_Fuction.toast_console('完成领取步数奖励');
 }
 /**
  * 赚步数；执行赚步数 任务（从元宝中心开始）
@@ -795,11 +852,16 @@ auto.waitFor()
 //走路赚步数
 //app_taolive.zouluduck.zhuanbushu();
 
+//转到元宝中心
+yuanbaozhongxin();
+sleep(2000);
+//领取步数奖励
+app_taolive.zouluduck.lingbushu();
 
 //转到元宝中心
 yuanbaozhongxin();
 sleep(2000);
-
+//看直播，赚元宝
 app_taolive.kanzhibo();
 
 
