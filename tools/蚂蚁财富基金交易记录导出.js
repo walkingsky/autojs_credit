@@ -3,6 +3,18 @@ auto.waitFor()
 app.launch('com.antfortune.wealth');
 sleep(500)
 
+//获取基金代码
+function getCode() {
+    let texts = className('android.view.View').depth(13).find()[0]
+    texts.child(4).child(1).click()
+    textContains('产品详情').waitFor()
+    //code = className('android.view.View').depth(15).indexInParent(0).findOne().text()
+    code = textContains('产品代码').findOne().text()
+    desc('返回').click()
+    sleep(200)
+    return code.match(/(\d{6})/)[1]
+}
+
 //导出交易记录的条数（不是实际导出数，在实际数据条数大于这个数时，实际导出数会大于这个数量）
 var max_records = 305
 
@@ -24,6 +36,7 @@ function zhuanhuan() {
     //先记录转出基金
     let texts = className('android.view.View').depth(13).find()[0]
     str = texts.child(6).text() + ',' //基金名称
+    str = str + ',' // 代码
     str = str + texts.child(34).text() + ',' //交易日期
     str = str + '转出,' //买卖方向
     str = str + jine(texts.child(10).text()) + ',' //份额
@@ -33,6 +46,7 @@ function zhuanhuan() {
     str = str + "0\n" //退回金额
     //记录转入基金
     str = str + texts.child(16).text() + ',' //基金名称
+    str = str + ',' // 代码
     str = str + texts.child(34).text() + ',' //交易日期
     str = str + '转入,' //买卖方向
     str = str + jine(texts.child(18).text()) + ',' //份额
@@ -51,6 +65,11 @@ function mairu() {
     let str = ''
     let texts = className('android.view.View').depth(13).find()[0]
     str = texts.child(4).child(1).text() + ',' //基金名称
+    if (texts.child(4).childCount() == 3)
+        str = str + getCode() + ',' // 代码
+    else
+        str = str + ',' // 代码
+    textContains('买入信息').waitFor()
     if (textContains('福利抵扣').exists()) {
         str = str + texts.child(25).text() + ',' //交易日期
         str = str + '买入,' //买卖方向
@@ -80,6 +99,7 @@ function maichu() {
     let str = ''
     let texts = className('android.view.View').depth(13).find()[0]
     str = texts.child(6).text() + ',' //基金名称
+    str = str + ',' // 代码
     str = str + riqi(texts.child(10).text()) + ',' //交易日期
     str = str + '卖出,' //买卖方向
     str = str + jine(texts.child(13).child(0).text()) + ',' //份额
@@ -98,6 +118,7 @@ function fenhong() {
     let str = ''
     let texts = className('android.view.View').depth(13).find()[0]
     str = texts.child(5).text() + ',' //基金名称
+    str = str + ',' // 代码
     str = str + riqi(texts.child(11).text()) + ',' //交易日期
     str = str + '分红,' //买卖方向
     if (textContains('现金分红').exists()) {
@@ -123,11 +144,12 @@ function zengjiafene() {
     let str = ''
     let texts = className('android.view.View').depth(13).find()[0]
     str = texts.child(5).text() + ',' //基金名称
+    str = str + ',' // 代码
     str = str + riqi(texts.child(11).text()) + ',' //交易日期
     str = str + '增强,' //买卖方向
-    str = str + '0,' //份额
+    str = str + jine(texts.child(9).text()) + ',' //份额
     str = str + '0,' //单位净值
-    str = str + jine(texts.child(9).text()) + ',' //交易金额
+    str = str + '0,' //交易金额
     str = str + '0,' //手续费
     str = str + "0\n" //退回金额
 
@@ -162,11 +184,11 @@ do {
 } while (records[0].child(0).childCount() < 305)
 
 
-var csv_str = ''
+var csv_str = "基金名称,基金代码,交易日期,交易类型,份额,单位净值,交易金额,手续费,转出退回金额\n"
 //files.write("/sdcard/基金交易记录.csv", csv_str)
 
-for (let n = 252; n < records[1].child(0).childCount(); n++) {
-    records[1].child(0).child(n).click()
+for (let n = 0; n < records[0].child(0).childCount(); n++) {
+    records[0].child(0).child(n).click()
     textContains('记录详情').waitFor()
     sleep(1000)
     if (textContains('分红信息').exists()) {
