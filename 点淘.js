@@ -840,17 +840,17 @@ function deubg(debug) {
 auto.waitFor()
 
 
-//start();
+start();
 //签到
-//app_taolive.diantao_sign();
+app_taolive.diantao_sign();
 
 
 
 //转到元宝中心
-//yuanbaozhongxin();
-//sleep(2000);
+yuanbaozhongxin();
+sleep(2000);
 //走路赚步数
-//app_taolive.zouluduck.zhuanbushu();
+app_taolive.zouluduck.zhuanbushu();
 
 //转到元宝中心
 yuanbaozhongxin();
