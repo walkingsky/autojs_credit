@@ -1,3 +1,9 @@
+/**
+ * 点淘刷元宝autojs脚本
+ * author: walkingsky
+ * url:https://github.com/walkingsky/autojs_credit
+ */
+
 var _common_Fuction = require('./自动脚本/common.js');
 
 var thread_swipe = null;
