@@ -687,8 +687,10 @@ function view(live) {
                 if (id('gold_action_text').findOne().text() == '点击翻倍' || id('gold_action_text').findOne().text() == '点击 x4 倍')
                     _common_Fuction.click_by_id('gold_action_layout');
 
-            if (!textContains('后完成').exists())
+            if (!textContains('后完成').exists()) {
+                sleep(1000); //偶尔会有未完成任务提示，故增加延时
                 break;
+            }
             sleep(1000);
             i++;
             //定时划屏
@@ -697,6 +699,7 @@ function view(live) {
         }
         //如果是直播
         if (live) {
+            _common_Fuction.click_by_text('残忍离开');//偶尔会有未完成任务提示
             _common_Fuction.click_by_id('taolive_close_btn');
         } else
             _common_Fuction.click_by_id('back');
