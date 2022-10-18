@@ -4,7 +4,7 @@
  * url:https://github.com/walkingsky/autojs_credit
  */
 
-var _common_Fuction = require('./common.js');
+var _common_Fuction = require('./自动脚本/common.js');
 
 var thread_swipe = null;
 var thread_egg = null;
@@ -101,6 +101,12 @@ app_taolive.duke.lingtili = function (finish) {
         click(400, 300);
         sleep(1000);
         let lingqu_button = idContains('action-drink').findOne(2000);
+        if (text('已领完').exists) { //体力已领完
+            _common_Fuction.toast_console('领取体力:已领完');
+            if (undefined == finish)
+                _common_Fuction.click_by_text(zhantili_button_text);
+            return;
+        }
         // 体力领取剩余时间
         let lingqu_button_text = lingqu_button.child(2).text();
         _common_Fuction.toast_console('领取体力:' + lingqu_button_text);
@@ -108,7 +114,8 @@ app_taolive.duke.lingtili = function (finish) {
             lingqu_button.click();
             sleep(3000);
             if (text('签到').exists())
-                text('签到').findOne().click();
+                //text('签到').findOne().click();
+                _common_Fuction.click_by_text('签到');
         }
         if (undefined == finish)
             _common_Fuction.click_by_text(zhantili_button_text);
@@ -990,6 +997,10 @@ function get_tili_remaining() {
             click(400, 300);
             sleep(1000);
             let lingqu_button = idContains('action-drink').findOne(2000);
+            if (text('已领完').exists) { //体力已领完
+                remaining = -1;
+                break;
+            }
             // 饮料领取剩余时间
             let lingqu_button_text = lingqu_button.child(2).text();
             _common_Fuction.toast_console('领取体力:' + lingqu_button_text);
@@ -1032,7 +1043,7 @@ function deubg(debug) {
 auto.waitFor()
 
 //设置起始步骤
-let start_step = 1;
+let start_step = 5;
 
 if (start_step <= 1)
     start();
@@ -1080,12 +1091,19 @@ if (start_step <= 6) {
         let drink_remaining = get_drink_remaining();
         sleep(2000);
         let tili_remaining = get_tili_remaining();
-
+        //找到最小的等待时间
         let remaining_time = lingjiang_remaining < drink_remaining ? (lingjiang_remaining < tili_remaining ? lingjiang_remaining : tili_remaining) : (drink_remaining < tili_remaining ? drink_remaining : tili_remaining);
-        if (drink_remaining == -1)
-            remaining_time = lingjiang_remaining;
-        if (remaining_time == -1)
-            remaining_time = 3600;
+        //如果有一个时间获取异常，则找到最小的一个非异常时间
+        if (remaining_time == -1) {
+            let array_tmp = [lingjiang_remaining, drink_remaining, tili_remaining];
+            array_tmp.sort(function (a, b) { return a - b });
+            if (array_tmp[1] != -1)
+                remaining_time = array_tmp[1];
+            else if (array_tmp[2] != -1)
+                remaining_time = array_tmp[1];
+            else
+                remaining_time = 1800
+        }
         _common_Fuction.toast_console('领奖剩余时间(秒):' + remaining_time);
         sleep(3000);
         //按顺序 轮询执行不同任务
