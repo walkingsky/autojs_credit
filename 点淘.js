@@ -4,7 +4,7 @@
  * url:https://github.com/walkingsky/autojs_credit
  */
 
-var _common_Fuction = require('./自动脚本/common.js');
+var _common_Fuction = require('./common.js');
 
 var thread_swipe = null;
 var thread_egg = null;
@@ -1034,16 +1034,16 @@ auto.waitFor()
 //设置起始步骤
 let start_step = 1;
 
-if (start_step <= 0)
+if (start_step <= 1)
     start();
 
-if (start_step <= 1) {
+if (start_step <= 2) {
 
     //签到
     app_taolive.diantao_sign();
 }
 
-if (start_step <= 2) {
+if (start_step <= 3) {
     //转到元宝中心
     yuanbaozhongxin();
     sleep(2000);
@@ -1051,7 +1051,7 @@ if (start_step <= 2) {
     app_taolive.duke.zhuanyuanbao();
 }
 
-if (start_step <= 3) {
+if (start_step <= 4) {
     //转到元宝中心
     yuanbaozhongxin();
     sleep(2000);
@@ -1059,7 +1059,7 @@ if (start_step <= 3) {
     app_taolive.duke.lingbushu();
 }
 
-if (start_step <= 4) {
+if (start_step <= 5) {
     //转到元宝中心
     yuanbaozhongxin();
     sleep(2000);
@@ -1067,7 +1067,7 @@ if (start_step <= 4) {
     app_taolive.duke.zhuanyuanbao(true);
 }
 
-if (start_step <= 5) {
+if (start_step <= 6) {
     //转到元宝中心
     yuanbaozhongxin();
     sleep(2000);
