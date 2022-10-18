@@ -1032,7 +1032,7 @@ function deubg(debug) {
 auto.waitFor()
 
 //设置起始步骤
-let start_step = 0;
+let start_step = 1;
 
 if (start_step <= 0)
     start();
