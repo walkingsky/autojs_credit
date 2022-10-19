@@ -101,7 +101,7 @@ app_taolive.duke.lingtili = function (finish) {
         click(400, 300);
         sleep(1000);
         let lingqu_button = idContains('action-drink').findOne(2000);
-        if (text('已领完').exists) { //体力已领完
+        if (text('已领完').exists()) { //体力已领完
             _common_Fuction.toast_console('领取体力:已领完');
             if (undefined == finish)
                 _common_Fuction.click_by_text(zhantili_button_text);
@@ -111,11 +111,11 @@ app_taolive.duke.lingtili = function (finish) {
         let lingqu_button_text = lingqu_button.child(2).text();
         _common_Fuction.toast_console('领取体力:' + lingqu_button_text);
         if (lingqu_button_text == '去领取') {
-            lingqu_button.click();
-            sleep(3000);
             if (text('签到').exists())
                 //text('签到').findOne().click();
                 _common_Fuction.click_by_text('签到');
+            lingqu_button.click();
+            sleep(3000);
         }
         if (undefined == finish)
             _common_Fuction.click_by_text(zhantili_button_text);
@@ -227,19 +227,24 @@ app_taolive.duke.lingbushu = function (second) {
             click(150, 300);
             if (text('O1CN012FPExu1acnrUXXUgf_!!6000000003351-2-tps-120-120.png_').exists())
                 text('O1CN012FPExu1acnrUXXUgf_!!6000000003351-2-tps-120-120.png_').findOne().click();
-            let yuanbao = textContains('88元宝').depth(16).find();
             let did = false;
-            yuanbao.forEach(element => {
-                element.click();
-                sleep(2000);
-                let zhibo = textContains('看直播60秒得').findOne(3000);
-                if (zhibo) {
-                    view_live();
-                    did = true;
+            while (true) {
+                let yuanbao = textContains('88元宝').depth(16).findOne(1000);
+                if (yuanbao) {
+                    yuanbao.click();
+                    sleep(2000);
+                    let zhibo = textContains('看直播60秒得').findOne(3000);
+                    if (zhibo) {
+                        view_live();
+                        did = true;
+                    } else {
+                        _common_Fuction.toast_console('点击了无法领取的元宝:' + yuanbao.text());
+                        break;
+                    }
                 } else {
-                    _common_Fuction.toast_console('点击了无法领取的元宝:' + element.text());
+                    break;
                 }
-            });
+            }
             //没领到就再做一次
             if (did == false && second == undefined) {
 
@@ -955,6 +960,10 @@ function get_drink_remaining() {
                 lingqu_button.child(1).child(7).child(0).child(1).click();
                 sleep(3000);
             }
+            if (lingqu_button_text == '明日再来') {
+                remaining = -1;
+                break;
+            }
             let re = /\d{2}:\d{2}:\d{2}/;
             if (re.exec(lingqu_button_text)) {
                 remaining = str_to_seconds(lingqu_button_text);
@@ -997,7 +1006,7 @@ function get_tili_remaining() {
             click(400, 300);
             sleep(1000);
             let lingqu_button = idContains('action-drink').findOne(2000);
-            if (text('已领完').exists) { //体力已领完
+            if (text('已领完').exists()) { //体力已领完
                 remaining = -1;
                 break;
             }
@@ -1043,7 +1052,7 @@ function deubg(debug) {
 auto.waitFor()
 
 //设置起始步骤
-let start_step = 5;
+let start_step = 1;
 
 if (start_step <= 1)
     start();
@@ -1100,7 +1109,7 @@ if (start_step <= 6) {
             if (array_tmp[1] != -1)
                 remaining_time = array_tmp[1];
             else if (array_tmp[2] != -1)
-                remaining_time = array_tmp[1];
+                remaining_time = array_tmp[2];
             else
                 remaining_time = 1800
         }
