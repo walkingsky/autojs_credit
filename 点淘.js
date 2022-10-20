@@ -22,6 +22,12 @@ var app_taolive = {};
 */
 app_taolive.diantao_sign = function () {
 
+    //双11预热广告弹窗
+    if (className('android.widget.ImageView').depth(9).indexInParent(3).exists()) {
+        _common_Fuction.toast_console('双11预热广告弹窗');
+        className('android.widget.ImageView').depth(9).indexInParent(3).findOne().click();
+    }
+
     //每日收益
     if (_common_Fuction.click_by_text('每日收益')) {
         sleep(4000);
@@ -660,10 +666,13 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
 
 
     sleep(2000);
-    if (dagong)
-        className('android.view.View').depth(16).indexInParent(0).findOne(2000).click();
-    else
-        className('android.view.View').depth(16).indexInParent(1).findOne(2000).click();
+    if (dagong) {
+        if (className('android.view.View').depth(16).indexInParent(0).exists())
+            className('android.view.View').depth(16).indexInParent(0).findOne(2000).click();
+    } else {
+        if (className('android.view.View').depth(16).indexInParent(1).exists())
+            className('android.view.View').depth(16).indexInParent(1).findOne(2000).click();
+    }
 
     sleep(1000);
     //有个是否使用的 提示，选择不使用
@@ -1052,7 +1061,7 @@ function deubg(debug) {
 auto.waitFor()
 
 //设置起始步骤
-let start_step = 1;
+let start_step = 2;
 
 if (start_step <= 1)
     start();
