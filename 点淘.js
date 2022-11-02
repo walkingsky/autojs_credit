@@ -225,7 +225,9 @@ app_taolive.duke.lingbushu = function (second) {
     }
     _common_Fuction.toast_console('进入领取步数奖励');
     try { //出发按钮
-        let chufa_button = text('出发').depth(18).indexInParent(2).findOne();
+        let chufa_button = text('出发').depth(18).indexInParent(2).findOne(3000);
+        if (!chufa_button)
+            chufa_button = text('今日步数已完成').depth(16).indexInParent(1).findOne(3000);
         if (chufa_button) {
             chufa_button.parent().click();
             sleep(5000);
