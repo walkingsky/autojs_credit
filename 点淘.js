@@ -375,7 +375,7 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
             if (kanhuangjin8.length == 0)
                 break;
             if (kanhuangjin8.length > 1) {
-                if (kanhuangjin8[0].parent().child(5).text() == '去完成')
+                if (kanhuangjin8[0].parent().child(5).text() == '已完成')
                     kanhuangjin8 = kanhuangjin8[1]
                 else
                     kanhuangjin8 = kanhuangjin8[0];
@@ -416,7 +416,7 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
             if (kanwanjianshipin.length == 0)
                 break;
             if (kanwanjianshipin.length > 1) {
-                if (kanwanjianshipin[0].parent().child(5).text == '去完成')
+                if (kanwanjianshipin[0].parent().child(5).text == '已完成')
                     kanwanjianshipin = kanwanjianshipin[1];
                 else
                     kanwanjianshipin = kanwanjianshipin[0];
@@ -680,7 +680,7 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
             sleep(2000);
             swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 400);
 
-            className('android.view.View').depth(14).indexInParent(9).findOne().click();
+            className('android.view.View').depth(14).indexInParent(9).findOne(3000).click();
             sleep(1000);
         } catch (error) {
             _common_Fuction.toast_console('看商品赚步数错误:' + error);
@@ -845,7 +845,7 @@ function sign() {
     _common_Fuction.click_by_text('今日签到');
     sleep(2000);
     view_live();
-    className("android.view.View").clickable(true).depth(16).findOne().click(); //返回元宝中心
+    className("android.view.View").clickable(true).depth(16).findOne(3000).click(); //返回元宝中心
 }
 
 /**
