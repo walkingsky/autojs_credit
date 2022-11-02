@@ -374,10 +374,12 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
                 break;
             if (kanhuangjin8.length > 1) {
                 if (kanhuangjin8[0].parent().child(5).text() == '去完成')
-                    kanhuangjin8 = kanhuangjin8[1];
+                    kanhuangjin8 = kanhuangjin8[1]
                 else
                     kanhuangjin8 = kanhuangjin8[0];
-            }
+            } else
+                kanhuangjin8 = kanhuangjin8[0];
+
             _common_Fuction.toast_console('看黄金8点档直播:' + kanhuangjin8.parent().child(5).text());
             if (kanhuangjin8.parent().child(5).text() == '去完成' || kanhuangjin8.parent().child(5).text() == '去观看') {
                 kanhuangjin8.click();
@@ -405,18 +407,21 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
         //喝水任务
         this.drink();
 
-    //看晚间惊喜视频60秒
+    //看晚间惊喜视频60秒 、看晚间精彩内容60秒
     try {
         while (true) {
-            var kanwanjianshipin = textContains('看晚间惊喜视频60秒').find();
+            var kanwanjianshipin = textContains('看晚间').find();
             if (kanwanjianshipin.length == 0)
                 break;
-            if (kanwanjianshipin.length > 1)
+            if (kanwanjianshipin.length > 1) {
                 if (kanwanjianshipin[0].parent().child(5).text == '去完成')
                     kanwanjianshipin = kanwanjianshipin[1];
                 else
                     kanwanjianshipin = kanwanjianshipin[0];
-            _common_Fuction.toast_console('看晚间惊喜视频60秒:' + kanwanjianshipin.parent().child(5).text());
+            }
+            else
+                kanwanjianshipin = kanwanjianshipin[0];
+            _common_Fuction.toast_console('看晚间:' + kanwanjianshipin.parent().child(0).text() + kanwanjianshipin.parent().child(5).text());
             if (kanwanjianshipin.parent().child(5).text() == '去完成') {
                 kanwanjianshipin.click();
                 //看视频，完成后，并返回
@@ -433,7 +438,7 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
             }
         }
     } catch (error) {
-        _common_Fuction.toast_console('看晚间惊喜视频60秒:' + error);
+        _common_Fuction.toast_console('看晚间:' + error);
     }
 
     if (dagong)
