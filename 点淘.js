@@ -310,10 +310,10 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
     //看视频60秒
     try {
         while (true) {
-            let kanshipin60miao = textContains('看视频60秒').findOne(3000);
+            let kanshipin60miao = textContains('看视频').findOne(3000);
             if (!kanshipin60miao)
                 break;
-            _common_Fuction.toast_console('看视频60秒:' + kanshipin60miao.parent().child(5).text());
+            _common_Fuction.toast_console(kanshipin60miao.text() + kanshipin60miao.parent().child(5).text());
             if (kanshipin60miao.parent().child(5).text() == '去完成') {
                 kanshipin60miao.click();
                 //看60秒视频，完成后，并返回
@@ -321,15 +321,16 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
                 sleep(3000);
                 //重新打开任务列表
                 let temp = text(zhuanqu_button_text).findOne(5000);
-                if (temp)
+                if (temp) {
                     temp.click();
-
+                    sleep(2000);
+                }
             } else {
                 break;
             }
         }
     } catch (error) {
-        _common_Fuction.toast_console('看视频60秒:' + error);
+        _common_Fuction.toast_console('看视频:' + error);
     }
 
     /*
@@ -368,26 +369,33 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
     //看黄金8点档直播3分钟
     try {
         while (true) {
-            let kanhuangjin8 = textContains('看黄金8点档直播3分钟').findOne(3000);
-            if (!kanhuangjin8)
+            var kanhuangjin8 = textContains('看黄金8点档直播').find();
+            if (kanhuangjin8.length == 0)
                 break;
-            _common_Fuction.toast_console('看黄金8点档直播3分钟:' + kanhuangjin8.parent().child(5).text());
-            if (kanhuangjin8.parent().child(5).text() == '去完成') {
+            if (kanhuangjin8.length > 1) {
+                if (kanhuangjin8[0].parent().child(5).text() == '去完成')
+                    kanhuangjin8 = kanhuangjin8[1];
+                else
+                    kanhuangjin8 = kanhuangjin8[0];
+            }
+            _common_Fuction.toast_console('看黄金8点档直播:' + kanhuangjin8.parent().child(5).text());
+            if (kanhuangjin8.parent().child(5).text() == '去完成' || kanhuangjin8.parent().child(5).text() == '去观看') {
                 kanhuangjin8.click();
                 //看视频，完成后，并返回
                 view(true);
                 sleep(3000);
                 //重新打开任务列表
                 let temp = text(zhuanqu_button_text).findOne(5000);
-                if (temp)
+                if (temp) {
                     temp.click();
-
+                    sleep(2000);
+                }
             } else {
                 break;
             }
         }
     } catch (error) {
-        _common_Fuction.toast_console('看黄金8点档直播3分钟:' + error);
+        _common_Fuction.toast_console('看黄金8点档直播:' + error);
     }
 
     if (dagong)
@@ -400,9 +408,14 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
     //看晚间惊喜视频60秒
     try {
         while (true) {
-            let kanwanjianshipin = textContains('看晚间惊喜视频60秒').findOne(3000);
-            if (!kanwanjianshipin)
+            var kanwanjianshipin = textContains('看晚间惊喜视频60秒').find();
+            if (kanwanjianshipin.length == 0)
                 break;
+            if (kanwanjianshipin.length > 1)
+                if (kanwanjianshipin[0].parent().child(5).text == '去完成')
+                    kanwanjianshipin = kanwanjianshipin[1];
+                else
+                    kanwanjianshipin = kanwanjianshipin[0];
             _common_Fuction.toast_console('看晚间惊喜视频60秒:' + kanwanjianshipin.parent().child(5).text());
             if (kanwanjianshipin.parent().child(5).text() == '去完成') {
                 kanwanjianshipin.click();
@@ -411,9 +424,10 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
                 sleep(3000);
                 //重新打开任务列表
                 let temp = text(zhuanqu_button_text).findOne(5000);
-                if (temp)
+                if (temp) {
                     temp.click();
-
+                    sleep(2000);
+                }
             } else {
                 break;
             }
@@ -467,8 +481,10 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
                 view();
                 sleep(3000);
                 let temp = text(zhuanqu_button_text).findOne(5000);
-                if (temp)
+                if (temp) {
                     temp.click();
+                    sleep(2000);
+                }
             } else {
                 break;
             }
@@ -595,9 +611,10 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
                 view(true);
                 sleep(3000);
                 let temp = text(zhuanqu_button_text).findOne(5000);
-                if (temp)
+                if (temp) {
                     temp.click();
-
+                    sleep(2000);
+                }
             } else {
                 break;
             }
@@ -1061,7 +1078,7 @@ function deubg(debug) {
 auto.waitFor()
 
 //设置起始步骤
-let start_step = 2;
+let start_step = 3;
 
 if (start_step <= 1)
     start();
