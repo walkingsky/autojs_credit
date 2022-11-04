@@ -81,10 +81,17 @@ app_taolive.duke.drink = function (finish) {
         sleep(1000);
         let lingqu_button = idContains('page').findOne(2000);
         // 饮料领取剩余时间
-        let lingqu_button_text = lingqu_button.child(1).child(7).child(0).child(1).text();
+        let lingqu_button_text = '';
+        if (textContains('今日步数已完成').exists()) {
+            _common_Fuction.toast_console('今日步数已完成，不用领取');
+            return;
+        }
+        else
+            lingqu_button_text = lingqu_button.child(1).child(7).child(0).child(1).text();
         _common_Fuction.toast_console('领取饮料奖励:' + lingqu_button_text);
         if (lingqu_button_text == '领取') {
-            lingqu_button.child(1).child(7).child(0).child(1).click();
+            _common_Fuction.click_by_text('领取');
+            //lingqu_button.child(1).child(7).child(0).child(1).click();
             sleep(3000);
         }
         if (undefined == finish)
@@ -109,8 +116,10 @@ app_taolive.duke.lingtili = function (finish) {
         let lingqu_button = idContains('action-drink').findOne(2000);
         if (text('已领完').exists()) { //体力已领完
             _common_Fuction.toast_console('领取体力:已领完');
-            if (undefined == finish)
+            if (undefined == finish) {
                 _common_Fuction.click_by_text(zhantili_button_text);
+                sleep(3000);
+            }
             return;
         }
         // 体力领取剩余时间
@@ -608,12 +617,19 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
     //看直播60秒
     try {
         while (true) {
-
-            let kanzhibo60miao = textContains('看直播60秒').findOne(3000);
-            if (!kanzhibo60miao)
+            var kanzhibo60miao = textContains('看直播').find();
+            if (kanzhibo60miao.length == 0)
                 break;
-            _common_Fuction.toast_console('看直播60秒:' + kanzhibo60miao.parent().child(5).text());
-            if (kanzhibo60miao.parent().child(5).text() == '去完成') {
+            if (kanzhibo60miao.length > 1) {
+                if (kanzhibo60miao[0].parent().child(5).text == '已完成')
+                    kanzhibo60miao = kanzhibo60miao[1];
+                else
+                    kanzhibo60miao = kanzhibo60miao[0];
+            }
+            else
+                kanzhibo60miao = kanzhibo60miao[0];
+            _common_Fuction.toast_console('看直播:' + kanzhibo60miao.parent().child(0).text() + kanzhibo60miao.parent().child(5).text());
+            if (kanzhibo60miao.parent().child(5).text() == '去完成' || kanzhibo60miao.parent().child(5).text() == '去观看') {
                 kanzhibo60miao.click();
                 view(true);
                 sleep(3000);
@@ -627,7 +643,7 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
             }
         }
     } catch (error) {
-        _common_Fuction.toast_console('看直播60秒:' + error);
+        _common_Fuction.toast_console('看直播:' + error);
     }
 
     if (dagong)
@@ -1085,7 +1101,7 @@ function deubg(debug) {
 auto.waitFor()
 
 //设置起始步骤
-let start_step = 3;
+let start_step = 5;
 
 if (start_step <= 1)
     start();
