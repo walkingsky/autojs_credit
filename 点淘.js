@@ -321,24 +321,34 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
     //看视频60秒
     try {
         while (true) {
-            let kanshipin60miao = textContains('看视频').findOne(3000);
-            if (!kanshipin60miao)
+            //let kanshipin60miao = textContains('看视频').findOne(3000);
+            let kanshipin60miao = textContains('看视频').find();
+            if (kanshipin60miao.length == 0)
                 break;
-            _common_Fuction.toast_console(kanshipin60miao.text() + kanshipin60miao.parent().child(5).text());
-            if (kanshipin60miao.parent().child(5).text() == '去完成') {
-                kanshipin60miao.click();
-                //看60秒视频，完成后，并返回
-                view();
-                sleep(3000);
-                //重新打开任务列表
-                let temp = text(zhuanqu_button_text).findOne(5000);
-                if (temp) {
-                    temp.click();
-                    sleep(2000);
+            let j = 0;
+            let i = 0;
+            for (; i < kanshipin60miao.length; i++) {
+                let kanshipin60miao_temp = kanshipin60miao[i];
+                _common_Fuction.toast_console(kanshipin60miao_temp.text() + kanshipin60miao_temp.parent().child(5).text());
+                if (kanshipin60miao_temp.parent().child(5).text() == '去完成') {
+                    kanshipin60miao_temp.click();
+                    //看60秒视频，完成后，并返回
+                    view();
+                    sleep(3000);
+                    //重新打开任务列表
+                    let temp = text(zhuanqu_button_text).findOne(5000);
+                    if (temp) {
+                        temp.click();
+                        sleep(2000);
+                    }
+                    i++;
+                    break;
                 }
-            } else {
-                break;
+                j++;
+
             }
+            if (i == j)
+                break;
         }
     } catch (error) {
         _common_Fuction.toast_console('看视频:' + error);
@@ -383,29 +393,30 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
             var kanhuangjin8 = textContains('看黄金8点档直播').find();
             if (kanhuangjin8.length == 0)
                 break;
-            if (kanhuangjin8.length > 1) {
-                if (kanhuangjin8[0].parent().child(5).text() == '已完成')
-                    kanhuangjin8 = kanhuangjin8[1]
-                else
-                    kanhuangjin8 = kanhuangjin8[0];
-            } else
-                kanhuangjin8 = kanhuangjin8[0];
-
-            _common_Fuction.toast_console('看黄金8点档直播:' + kanhuangjin8.parent().child(5).text());
-            if (kanhuangjin8.parent().child(5).text() == '去完成' || kanhuangjin8.parent().child(5).text() == '去观看') {
-                kanhuangjin8.click();
-                //看视频，完成后，并返回
-                view(true);
-                sleep(3000);
-                //重新打开任务列表
-                let temp = text(zhuanqu_button_text).findOne(5000);
-                if (temp) {
-                    temp.click();
-                    sleep(2000);
+            let j = 0;
+            let i = 0;
+            for (; i < kanhuangjin8.length; i++) {
+                let kanhuangjin8_temp = kanhuangjin8[i];
+                _common_Fuction.toast_console('看黄金8点档直播:' + kanhuangjin8_temp.parent().child(5).text());
+                if (kanhuangjin8_temp.parent().child(5).text() == '去完成' || kanhuangjin8_temp.parent().child(5).text() == '去观看') {
+                    kanhuangjin8_temp.click();
+                    //看视频，完成后，并返回
+                    view(true);
+                    sleep(3000);
+                    //重新打开任务列表
+                    let temp = text(zhuanqu_button_text).findOne(5000);
+                    if (temp) {
+                        temp.click();
+                        sleep(2000);
+                    }
+                    i++;
+                    break;
+                } else {
+                    j++;
                 }
-            } else {
-                break;
             }
+            if (i == j)
+                break;
         }
     } catch (error) {
         _common_Fuction.toast_console('看黄金8点档直播:' + error);
@@ -424,28 +435,29 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
             var kanwanjianshipin = textContains('看晚间').find();
             if (kanwanjianshipin.length == 0)
                 break;
-            if (kanwanjianshipin.length > 1) {
-                if (kanwanjianshipin[0].parent().child(5).text == '已完成')
-                    kanwanjianshipin = kanwanjianshipin[1];
-                else
-                    kanwanjianshipin = kanwanjianshipin[0];
-            }
-            else
-                kanwanjianshipin = kanwanjianshipin[0];
-            _common_Fuction.toast_console('看晚间:' + kanwanjianshipin.parent().child(0).text() + kanwanjianshipin.parent().child(5).text());
-            if (kanwanjianshipin.parent().child(5).text() == '去完成') {
-                kanwanjianshipin.click();
-                //看视频，完成后，并返回
-                view();
-                sleep(3000);
-                //重新打开任务列表
-                let temp = text(zhuanqu_button_text).findOne(5000);
-                if (temp) {
-                    temp.click();
-                    sleep(2000);
+            let j = 0;
+            let i = 0;
+            for (; i < kanwanjianshipin.length; i++) {
+                let kanwanjianshipin_temp = kanwanjianshipin[i];
+                _common_Fuction.toast_console('看晚间:' + kanwanjianshipin_temp.parent().child(0).text() + kanwanjianshipin_temp.parent().child(5).text());
+                if (kanwanjianshipin_temp.parent().child(5).text() == '去完成') {
+                    kanwanjianshipin_temp.click();
+                    //看视频，完成后，并返回
+                    view();
+                    sleep(3000);
+                    //重新打开任务列表
+                    let temp = text(zhuanqu_button_text).findOne(5000);
+                    if (temp) {
+                        temp.click();
+                        sleep(2000);
+                    }
+                    i++;
+                    break;
+                } else {
+                    j++;
                 }
-            } else {
-                break;
+                if (i == j)
+                    break;
             }
         }
     } catch (error) {
@@ -488,47 +500,34 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
     //看精彩内容3分钟
     try {
         while (true) {
-            let jingcaineirong = textContains('看精彩内容3分钟').findOne(2000);
-            if (!jingcaineirong)
+            let jingcaineirong = textContains('看精彩内容').find();
+            if (jingcaineirong.length == 0)
                 break;
-            _common_Fuction.toast_console('看精彩内容3分钟:' + jingcaineirong.parent().child(5).text());
-            if (jingcaineirong.parent().child(5).text() == '去完成') {
-                jingcaineirong.click();
-                view();
-                sleep(3000);
-                let temp = text(zhuanqu_button_text).findOne(5000);
-                if (temp) {
-                    temp.click();
-                    sleep(2000);
+            let j = 0;
+            let i = 0;
+            for (; i < jingcaineirong.length; i++) {
+                let jingcaineirong_temp = jingcaineirong[i];
+                _common_Fuction.toast_console('看精彩内容:' + jingcaineirong_temp.parent().child(5).text());
+                if (jingcaineirong_temp.parent().child(5).text() == '去完成') {
+                    jingcaineirong_temp.click();
+                    view();
+                    sleep(3000);
+                    let temp = text(zhuanqu_button_text).findOne(5000);
+                    if (temp) {
+                        temp.click();
+                        sleep(2000);
+                    }
+                    i++;
+                    break;
+                } else {
+                    j++;
                 }
-            } else {
+            }
+            if (i == j)
                 break;
-            }
         }
     } catch (error) {
-        _common_Fuction.toast_console('看精彩内容3分钟:' + error);
-    }
-
-    if (dagong)
-        //领体力
-        this.lingtili();
-    else
-        //喝水任务
-        this.drink();
-
-    //看精彩内容60秒
-    let jingcaineirong60 = textContains('看精彩内容60秒').findOne(2000);
-    try {
-        if (jingcaineirong60) {
-            _common_Fuction.toast_console('看精彩内容60秒:' + jingcaineirong60.parent().child(4).text());
-            if (jingcaineirong60.parent().child(4).text() == '去完成') {
-                jingcaineirong60.click();
-                view();
-                sleep(1000);
-            }
-        }
-    } catch (error) {
-        _common_Fuction.toast_console('看精彩内容60秒:' + error);
+        _common_Fuction.toast_console('看精彩内容:' + error);
     }
 
     if (dagong)
@@ -620,27 +619,28 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
             var kanzhibo60miao = textContains('看直播').find();
             if (kanzhibo60miao.length == 0)
                 break;
-            if (kanzhibo60miao.length > 1) {
-                if (kanzhibo60miao[0].parent().child(5).text == '已完成')
-                    kanzhibo60miao = kanzhibo60miao[1];
-                else
-                    kanzhibo60miao = kanzhibo60miao[0];
-            }
-            else
-                kanzhibo60miao = kanzhibo60miao[0];
-            _common_Fuction.toast_console('看直播:' + kanzhibo60miao.parent().child(0).text() + kanzhibo60miao.parent().child(5).text());
-            if (kanzhibo60miao.parent().child(5).text() == '去完成' || kanzhibo60miao.parent().child(5).text() == '去观看') {
-                kanzhibo60miao.click();
-                view(true);
-                sleep(3000);
-                let temp = text(zhuanqu_button_text).findOne(5000);
-                if (temp) {
-                    temp.click();
-                    sleep(2000);
+            let j = 0;
+            let i = 0;
+            for (; i < kanzhibo60miao.length; i++) {
+                let kanzhibo60miao_temp = kanzhibo60miao[i];
+                _common_Fuction.toast_console('看直播:' + kanzhibo60miao_temp.parent().child(0).text() + kanzhibo60miao_temp.parent().child(5).text());
+                if (kanzhibo60miao_temp.parent().child(5).text() == '去完成' || kanzhibo60miao_temp.parent().child(5).text() == '去观看') {
+                    kanzhibo60miao_temp.click();
+                    view(true);
+                    sleep(3000);
+                    let temp = text(zhuanqu_button_text).findOne(5000);
+                    if (temp) {
+                        temp.click();
+                        sleep(2000);
+                    }
+                    i++;
+                    break;
+                } else {
+                    j++;
                 }
-            } else {
-                break;
             }
+            if (i == j)
+                break;
         }
     } catch (error) {
         _common_Fuction.toast_console('看直播:' + error);
@@ -1101,7 +1101,7 @@ function deubg(debug) {
 auto.waitFor()
 
 //设置起始步骤
-let start_step = 5;
+let start_step = 3;
 
 if (start_step <= 1)
     start();
