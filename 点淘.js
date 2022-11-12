@@ -329,8 +329,14 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
             let i = 0;
             for (; i < kanshipin60miao.length; i++) {
                 let kanshipin60miao_temp = kanshipin60miao[i];
+                _common_Fuction.toast_console(kanshipin60miao_temp.text() + kanshipin60miao_temp.parent().child(4).text());
                 _common_Fuction.toast_console(kanshipin60miao_temp.text() + kanshipin60miao_temp.parent().child(5).text());
-                if (kanshipin60miao_temp.parent().child(5).text() == '去完成') {
+                let element_text = '';
+                if (kanshipin60miao_temp.parent().child(1).text() == '得体力')
+                    element_text = kanshipin60miao_temp.parent().child(4).text();
+                else
+                    element_text = kanshipin60miao_temp.parent().child(5).text();
+                if (element_text == '去完成' || element_text == '去观看') {
                     kanshipin60miao_temp.click();
                     //看60秒视频，完成后，并返回
                     view();
@@ -456,9 +462,9 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
                 } else {
                     j++;
                 }
-                if (i == j)
-                    break;
             }
+            if (i == j)
+                break;
         }
     } catch (error) {
         _common_Fuction.toast_console('看晚间:' + error);
