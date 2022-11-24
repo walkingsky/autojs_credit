@@ -254,6 +254,8 @@ app_taolive.duke.lingbushu = function (second) {
                     if (zhibo) {
                         view_live();
                         did = true;
+                    } else if (textContains('我知道了').exists()) {
+                        textContains('我知道了').indexInParent(4).click();
                     } else {
                         _common_Fuction.toast_console('点击了无法领取的元宝:' + yuanbao.text());
                         break;
