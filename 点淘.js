@@ -132,6 +132,7 @@ app_taolive.duke.lingtili = function (finish) {
             lingqu_button.click();
             sleep(3000);
         }
+        //console.log(lingqu_button_text);
         if (undefined == finish)
             _common_Fuction.click_by_text(zhantili_button_text);
         sleep(3000);
@@ -146,7 +147,7 @@ app_taolive.duke.lingtili = function (finish) {
  */
 app_taolive.kanzhibo = function (renwu, remaining_time) {
     _common_Fuction.toast_console('进入' + renwu);
-    let renwu_button = textContains(renwu).depth(26).indexInParent(1).findOne(2000);
+    let renwu_button = textContains(renwu).depth(27).indexInParent(1).findOne(2000);
     try {
         if (renwu_button) {
             var start = Date.parse(new Date()) / 1000;
@@ -388,6 +389,8 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
         _common_Fuction.toast_console('逛一逛支付宝芭芭农场error:' + error);
     }
     */
+
+
     if (dagong)
         //领体力
         this.lingtili();
@@ -632,7 +635,8 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
             for (; i < kanzhibo60miao.length; i++) {
                 let kanzhibo60miao_temp = kanzhibo60miao[i];
                 _common_Fuction.toast_console('看直播:' + kanzhibo60miao_temp.parent().child(0).text() + kanzhibo60miao_temp.parent().child(5).text());
-                if (kanzhibo60miao_temp.parent().child(5).text() == '去完成' || kanzhibo60miao_temp.parent().child(5).text() == '去观看') {
+                //if (kanzhibo60miao_temp.parent().child(5).text() == '去完成' || kanzhibo60miao_temp.parent().child(5).text() == '去观看') {
+                if ((kanzhibo60miao_temp.parent().child(5).text() == '去完成' || kanzhibo60miao_temp.parent().child(5).text() == '去观看') && kanzhibo60miao_temp.parent().child(0).text().search('分钟') == -1) {
                     kanzhibo60miao_temp.click();
                     view(true);
                     sleep(3000);
@@ -844,6 +848,7 @@ function find_yuanbaozhongxin_button() {
  */
 function view_live() {
     sleep(1000);
+    id('taolive_favor_img').depth(15).indexInParent(0).findOne(6000);
     if (textContains('后完成').exists()) {  //直接进入的，不用点击“看直播60秒按钮”
         var live = true;
     } else
@@ -951,7 +956,7 @@ function get_lingjiang_remaining() {
     var remaining = 0;
     try {
         while (true) {
-            let a = className('android.view.View').depth(28).indexInParent(1).find()
+            let a = className('android.view.View').depth(29).indexInParent(1).find()
             if (a.length == 0) {
                 _common_Fuction.toast_console('没找到组件');
                 return -1;
@@ -1109,7 +1114,8 @@ function deubg(debug) {
 auto.waitFor()
 
 //设置起始步骤
-let start_step = 3;
+let start_step = 6;
+sleep(5000);
 
 if (start_step <= 1)
     start();
