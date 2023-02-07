@@ -716,6 +716,33 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
         _common_Fuction.toast_console('完成看商品赚步数');
     }
 
+    if (dagong) {
+        //看商品赚体力
+        _common_Fuction.toast_console('看商品赚体力');
+        swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 400);
+        swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 400);
+        try {
+
+            var i = 0;
+            while (textContains('看商品赚体力').exists()) {
+                if (i % 2 == 0)
+                    swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.7, 600);
+                sleep(1000);
+                if (textContains('今日任务已完成').exists())
+                    break;
+                i++;
+            }
+            sleep(2000);
+            swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 400);
+
+            className('android.view.View').depth(14).indexInParent(9).findOne(3000).click();
+            sleep(1000);
+        } catch (error) {
+            _common_Fuction.toast_console('看商品赚体力错误:' + error);
+        }
+        _common_Fuction.toast_console('完成看商品赚体力');
+    }
+
 
     sleep(2000);
     if (dagong) {
@@ -1114,7 +1141,7 @@ function deubg(debug) {
 auto.waitFor()
 
 //设置起始步骤
-let start_step = 6;
+let start_step = 5;
 sleep(5000);
 
 if (start_step <= 1)
