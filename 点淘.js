@@ -726,7 +726,7 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
             var i = 0;
             while (textContains('看商品赚体力').exists()) {
                 if (i % 2 == 0)
-                    swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.7, 600);
+                    swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 300);
                 sleep(1000);
                 if (textContains('今日任务已完成').exists())
                     break;
@@ -762,7 +762,12 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
 //浏览元宝商城
 function view_shangcheng() {
     //定时划屏
+    let tmp = false;
     for (let i = 0; i < 60; i++) {
+        if (className('android.widget.ImageView').depth(9).indexInParent(3).exists() && tmp == false) {
+            className('android.widget.ImageView').depth(9).indexInParent(3).findOne().click();
+            tmp = true;
+        }
         if (i % 3 == 0)
             swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.7, 800);
         sleep(1000);
@@ -773,12 +778,23 @@ function view_shangcheng() {
 }
 
 /**
+ * 
+ */
+function huadong_yanzheng() {
+    sleep(500);
+    if (id('bg-img').className('android.widget.Image').exists()) {
+        swipe(100, 1400, 990, 1430, 400);
+    }
+}
+
+/**
  * 浏览视频的任务
  * @param {bool} live 是否是直播（关闭按钮的id 不一样） true：是直播；其他：视频
  */
 function view(live) {
     _common_Fuction.toast_console('进入view函数:(' + live + ')');
     sleep(1000);
+    huadong_yanzheng();
     let i = 0;
     try {
         while (true) {
@@ -1141,7 +1157,7 @@ function deubg(debug) {
 auto.waitFor()
 
 //设置起始步骤
-let start_step = 5;
+let start_step = 3;
 sleep(5000);
 
 if (start_step <= 1)
