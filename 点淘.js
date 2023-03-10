@@ -74,6 +74,7 @@ app_taolive.duke = {};
  * @param {bool} finish 点击完成后是否打开转步数任务列表，true 为不打开任务列表
  */
 app_taolive.duke.drink = function (finish) {
+    sleep(3000);
     try {
         let zhanbushu_button_text = 'O1CN01IeRzpJ1hSSJ53VxuH_!!6000000004276-2-tps-116-132.png_';
         //点击空白，关闭可能打开的任务列表
