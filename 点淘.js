@@ -257,7 +257,7 @@ app_taolive.duke.lingbushu = function (second) {
                         view_live();
                         did = true;
                     } else if (textContains('我知道了').exists()) {
-                        textContains('我知道了').indexInParent(4).click();
+                        textContains('我知道了').indexInParent(5).click();
                     } else {
                         _common_Fuction.toast_console('点击了无法领取的元宝:' + yuanbao.text());
                         break;
@@ -652,6 +652,7 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
                     j++;
                 }
             }
+            sleep(2000);
             if (i == j)
                 break;
         }
@@ -794,7 +795,7 @@ function huadong_yanzheng() {
  */
 function view(live) {
     _common_Fuction.toast_console('进入view函数:(' + live + ')');
-    sleep(1000);
+    sleep(5000);
     huadong_yanzheng();
     let i = 0;
     try {
@@ -805,7 +806,7 @@ function view(live) {
                     _common_Fuction.click_by_id('gold_action_layout');
 
             if (!textContains('后完成').exists()) {
-                sleep(1000); //偶尔会有未完成任务提示，故增加延时
+                sleep(3000); //偶尔会有未完成任务提示，故增加延时
                 break;
             }
             sleep(1000);
@@ -1000,7 +1001,7 @@ function get_lingjiang_remaining() {
     var remaining = 0;
     try {
         while (true) {
-            let a = className('android.view.View').depth(29).indexInParent(1).find()
+            let a = className('android.view.View').depth(30).indexInParent(1).find()
             if (a.length == 0) {
                 _common_Fuction.toast_console('没找到组件');
                 return -1;
