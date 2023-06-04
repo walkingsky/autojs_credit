@@ -1001,7 +1001,9 @@ function get_lingjiang_remaining() {
     var remaining = 0;
     try {
         while (true) {
-            let a = className('android.view.View').depth(30).indexInParent(1).find()
+            let b = className('android.view.View').depth(30).indexInParent(1).find();
+            let c = className('android.view.View').depth(27).indexInParent(1).find();
+            let a = [].concat(b, c);
             if (a.length == 0) {
                 _common_Fuction.toast_console('没找到组件');
                 return -1;
