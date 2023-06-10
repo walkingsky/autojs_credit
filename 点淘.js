@@ -148,7 +148,9 @@ app_taolive.duke.lingtili = function (finish) {
  */
 app_taolive.kanzhibo = function (renwu, remaining_time) {
     _common_Fuction.toast_console('进入' + renwu);
-    let renwu_button = textContains(renwu).depth(27).indexInParent(1).findOne(2000);
+    let renwu_button = textContains(renwu).depth(24).indexInParent(1).findOne(2000);
+    if (!renwu_button)
+        renwu_button = textContains(renwu).depth(27).indexInParent(1).findOne(2000);
     try {
         if (renwu_button) {
             var start = Date.parse(new Date()) / 1000;
@@ -258,6 +260,14 @@ app_taolive.duke.lingbushu = function (second) {
                         did = true;
                     } else if (textContains('我知道了').exists()) {
                         textContains('我知道了').indexInParent(5).click();
+                    } else if (textContains('额外领最高').exists()) {
+                        let ewailing = textContains('额外领最高').findOne(3000);
+                        if (ewailing) {
+                            ewailing.click();
+                            sleep(2000);
+                            view_ewailing();
+                            did = true;
+                        }
                     } else {
                         _common_Fuction.toast_console('点击了无法领取的元宝:' + yuanbao.text());
                         break;
@@ -912,6 +922,29 @@ function view_live() {
         }
         _common_Fuction.click_by_id('taolive_close_btn');
     }
+}
+
+
+/**
+ * 额外领
+ */
+function view_ewailing() {
+    sleep(1000);
+    _common_Fuction.toast_console('进入额外领');
+    try {
+        while (true) {
+            let remain = textContains('|跳过').indexInParent(1).findOne(5000);
+            if (remain)
+                sleep(1000);
+            else
+                break;
+        }
+        idContains("tt_reward_full_count_down_after").findOne(5000).click();
+        sleep(3000);
+    } catch (e) {
+        _common_Fuction.toast_console('进入额外领错误：' + e);
+    }
+    _common_Fuction.toast_console('退出额外领');
 }
 
 //签到
