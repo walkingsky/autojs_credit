@@ -150,6 +150,8 @@ app_taolive.kanzhibo = function (renwu, remaining_time) {
     _common_Fuction.toast_console('进入' + renwu);
     let renwu_button = textContains(renwu).depth(24).indexInParent(1).findOne(2000);
     if (!renwu_button)
+        renwu_button = textContains(renwu).depth(23).indexInParent(1).findOne(2000);
+    if (!renwu_button)
         renwu_button = textContains(renwu).depth(27).indexInParent(1).findOne(2000);
     try {
         if (renwu_button) {
