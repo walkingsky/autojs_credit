@@ -148,11 +148,11 @@ app_taolive.duke.lingtili = function (finish) {
  */
 app_taolive.kanzhibo = function (renwu, remaining_time) {
     _common_Fuction.toast_console('进入' + renwu);
-    let renwu_button = textContains(renwu).depth(24).indexInParent(1).findOne(2000);
+    let renwu_button = textContains(renwu).depth(24).indexInParent(2).findOne(2000);
     if (!renwu_button)
-        renwu_button = textContains(renwu).depth(23).indexInParent(1).findOne(2000);
+        renwu_button = textContains(renwu).depth(23).indexInParent(2).findOne(2000);
     if (!renwu_button)
-        renwu_button = textContains(renwu).depth(27).indexInParent(1).findOne(2000);
+        renwu_button = textContains(renwu).depth(27).indexInParent(2).findOne(2000);
     try {
         if (renwu_button) {
             var start = Date.parse(new Date()) / 1000;
@@ -256,8 +256,10 @@ app_taolive.duke.lingbushu = function (second) {
                 if (yuanbao) {
                     yuanbao.click();
                     sleep(2000);
-                    let zhibo = textContains('看直播60秒得').findOne(3000);
+                    //let zhibo = textContains('看直播60秒得').findOne(3000);
+                    let zhibo = textContains('浏览30秒再得').findOne(3000);
                     if (zhibo) {
+                        textContains('浏览30秒再得').findOne().click();
                         view_live();
                         did = true;
                     } else if (textContains('我知道了').exists()) {
@@ -299,6 +301,65 @@ app_taolive.duke.lingbushu = function (second) {
     _common_Fuction.toast_console('完成领取步数奖励');
 }
 /**
+ * 赚元宝的看直播任务
+ * @param {text} title 看直播类型标题
+ * @param {text} zhanbushu_button_text 上层传过来的任务按钮文本
+ * @param {text} live 浏览类型，‘live’直播，‘view’滑动浏览
+ */
+app_taolive.duke.kanzhibo = function (title, zhanbushu_button_text, live) {
+    try {
+        while (true) {
+            var kanzhibo = textContains(title).find();
+            if (kanzhibo.length == 0)
+                break;
+            let j = 0;
+            let i = 0;
+            for (; i < kanzhibo.length; i++) {
+                let kanzhibo_temp = kanzhibo[i];
+
+                let _temp_bool = false;
+                if (kanzhibo_temp.parent().childCount() > 8) {
+                    if (kanzhibo_temp.parent().child(7).text() == '去完成')
+                        _temp_bool = true;
+                    _common_Fuction.toast_console('看直播:' + kanzhibo_temp.parent().child(0).text() + kanzhibo_temp.parent().child(7).text());
+                } else if (kanzhibo_temp.parent().childCount() > 7) {
+                    if (kanzhibo_temp.parent().child(6).text() == '去完成')
+                        _temp_bool = true;
+                    _common_Fuction.toast_console('看直播:' + kanzhibo_temp.parent().child(0).text() + kanzhibo_temp.parent().child(6).text());
+                }
+                else if (kanzhibo_temp.parent().child(5).text() == '去完成' || kanzhibo_temp.parent().child(5).text() == '去观看') {
+                    _common_Fuction.toast_console('看直播:' + kanzhibo_temp.parent().child(0).text() + kanzhibo_temp.parent().child(5).text());
+                    _temp_bool = true;
+                }
+                if (_temp_bool) {
+                    //if ((kanzhibo_temp.parent().child(5).text() == '去完成' || kanzhibo_temp.parent().child(5).text() == '去观看') && kanzhibo_temp.parent().child(0).text().search('分钟') == -1) {
+                    kanzhibo_temp.click();
+                    if (live == 'live')
+                        view(true);
+                    else if (live == 'view')
+                        view_live();
+                    sleep(3000);
+                    let temp = text(zhanbushu_button_text).findOne(5000);
+                    if (temp) {
+                        temp.click();
+                        sleep(2000);
+                    }
+                    i++;
+                    break;
+                } else {
+                    j++;
+                }
+            }
+            sleep(2000);
+            if (i == j)
+                break;
+        }
+    } catch (error) {
+        _common_Fuction.toast_console('看直播:' + error);
+    }
+}
+
+/**
  * 赚元宝任务（从元宝中心开始）
  * @param {bool} dagong 是否是打工任务，还是走路任务
  */
@@ -335,6 +396,7 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
         this.drink();
 
     //看视频60秒
+    ////////////////////////////++++++++++++++++++++++++++比较老的代码，用不上了+++++++++++++++++++++++{
     try {
         while (true) {
             //let kanshipin60miao = textContains('看视频').findOne(3000);
@@ -376,14 +438,109 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
         _common_Fuction.toast_console('看视频:' + error);
     }
 
-    /*
+    //看小视频
+    try {
+        while (true) {
+            //let kanshipin60miao = textContains('看小视频').findOne(3000);
+            let kanshipin60miao = textContains('看小视频').find();
+            if (kanshipin60miao.length == 0)
+                break;
+            let j = 0;
+            let i = 0;
+            for (; i < kanshipin60miao.length; i++) {
+                let kanshipin60miao_temp = kanshipin60miao[i];
+                _common_Fuction.toast_console(kanshipin60miao_temp.text() + kanshipin60miao_temp.parent().child(4).text());
+                _common_Fuction.toast_console(kanshipin60miao_temp.text() + kanshipin60miao_temp.parent().child(5).text());
+                let element_text = '';
+                if (kanshipin60miao_temp.parent().child(1).text() == '得体力')
+                    element_text = kanshipin60miao_temp.parent().child(5).text();
+                else
+                    element_text = kanshipin60miao_temp.parent().child(6).text();
+                if (element_text == '领福利' || element_text == '去完成') {
+                    kanshipin60miao_temp.click();
+                    //看60秒视频，完成后，并返回
+                    view();
+                    sleep(3000);
+                    //重新打开任务列表
+                    let temp = text(zhuanqu_button_text).findOne(5000);
+                    if (temp) {
+                        temp.click();
+                        sleep(2000);
+                    }
+                    i++;
+                    break;
+                }
+                j++;
+
+            }
+            if (i == j)
+                break;
+        }
+    } catch (error) {
+        _common_Fuction.toast_console('看小视频:' + error);
+    }
+    ////////////////////////////++++++++++++++++++++++++++比较老的代码，用不上了+++++++++++++++++++++++}
+
+    if (dagong) {
+        // 打工鸭
+        sleep(2000);
+        app_taolive.duke.kanzhibo('看小视频30秒', zhanbushu_button_text, 'live');
+        sleep(4000);
+        app_taolive.duke.kanzhibo('看直播3分钟', zhanbushu_button_text, 'live');
+        sleep(4000);
+        app_taolive.duke.kanzhibo('浏览精选推荐', zhanbushu_button_text, 'view');
+        sleep(4000);
+        app_taolive.duke.kanzhibo('看点淘羊毛直播间', zhanbushu_button_text, 'live');
+    } else {
+        //走路鸭
+        sleep(2000);
+        app_taolive.duke.kanzhibo('看直播60秒', zhanbushu_button_text, 'live');
+        sleep(4000);
+        app_taolive.duke.kanzhibo('看好物视频60秒', zhanbushu_button_text, 'live');
+        sleep(4000);
+        app_taolive.duke.kanzhibo('看精彩内容30秒', zhanbushu_button_text, 'view');
+        sleep(4000);
+        app_taolive.duke.kanzhibo('浏览好货卖场30秒', zhanbushu_button_text, 'view');
+        sleep(4000);
+        app_taolive.duke.kanzhibo('浏览精选推荐60秒', zhanbushu_button_text, 'view');
+        sleep(3000);
+    }
+
     if (dagong)
         //领体力
         this.lingtili();
     else
         //喝水任务
         this.drink();
+    sleep(4000);
+    app_taolive.duke.kanzhibo('看直播2分钟', zhanbushu_button_text, 'live');
+    sleep(3000);
+    if (dagong)
+        //领体力
+        this.lingtili();
+    else
+        //喝水任务
+        this.drink();
+    sleep(4000);
+    app_taolive.duke.kanzhibo('看好看直播间2分钟', zhanbushu_button_text, 'live');
+    sleep(3000);
+    if (dagong)
+        //领体力
+        this.lingtili();
+    else
+        //喝水任务
+        this.drink();
+    //sleep(4000);
+    //app_taolive.duke.kanzhibo('看直播回放5分钟', zhanbushu_button_text, 'live');//处理时间太长了
 
+
+    if (dagong)
+        //领体力
+        this.lingtili();
+    else
+        //喝水任务
+        this.drink();
+    /*
     //逛一逛支付宝芭芭农场
     try {
         let babanongchang = textContains('芭芭农场').findOne(2000);
@@ -402,14 +559,6 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
         _common_Fuction.toast_console('逛一逛支付宝芭芭农场error:' + error);
     }
     */
-
-
-    if (dagong)
-        //领体力
-        this.lingtili();
-    else
-        //喝水任务
-        this.drink();
 
     //看黄金8点档直播3分钟
     try {
@@ -830,13 +979,17 @@ function view(live) {
         //如果是直播
         if (live) {
             _common_Fuction.click_by_text('残忍离开');//偶尔会有未完成任务提示
-            _common_Fuction.click_by_id('taolive_close_btn');
+            _temp_false = _common_Fuction.click_by_id('taolive_close_btn');
+            if (_temp_false == false)
+                _common_Fuction.click_by_id('back');
         } else
             _common_Fuction.click_by_id('back');
 
     } catch (error) {
         _common_Fuction.toast_console(error);
     }
+    if (textContains('残忍离开').id('negative').exists())
+        textContains('残忍离开').id('negative').findOne().click();
     _common_Fuction.toast_console('退出view函数');
 }
 
@@ -896,6 +1049,7 @@ function find_yuanbaozhongxin_button() {
         _common_Fuction.click_by_id('gold_common_image');
         return true;
     } else {
+        _common_Fuction.toast_console("gold_common_image 没找到");
         return false;
     }
 }
@@ -904,25 +1058,45 @@ function find_yuanbaozhongxin_button() {
  * 看直播60秒
  */
 function view_live() {
-    sleep(1000);
-    id('taolive_favor_img').depth(15).indexInParent(0).findOne(6000);
-    if (textContains('后完成').exists()) {  //直接进入的，不用点击“看直播60秒按钮”
+    sleep(4000);
+    live_title = '';
+    if (textContains('后完成').exists() || textContains('后发奖').exists() || textContains('滑动浏览').exists() || textContains('后领奖').exists()) {  //直接进入的，不用点击“看直播60秒按钮”
         var live = true;
+        live_title = '后完成';
+        if (textContains('后发奖').exists())
+            live_title = '后发奖';
+        else if (textContains('后领奖').exists())
+            live_title = '后领奖';
+        else if (textContains('滑动浏览').exists())
+            live_title = '滑动浏览';
     } else
         var live = _common_Fuction.click_by_textcontains('看直播60秒'); //看直播的按钮
     sleep(1000);
+
     if (live) {
+        var i = 0;
         while (true) {
             //翻倍操作
             if (id('gold_action_text').exists())
                 if (id('gold_action_text').findOne().text() == '点击翻倍' || id('gold_action_text').findOne().text() == '点击 x4 倍')
                     _common_Fuction.click_by_id('gold_action_layout');
 
-            if (!textContains('后完成').exists())
+            if (!textContains(live_title).exists())
                 break;
+            if (live_title != '后完成') //先划一次屏
+                swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 400);
             sleep(1000);
+            i++;
+            //定时划屏
+            if (i % 5 == 0)
+                swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 400);
         }
-        _common_Fuction.click_by_id('taolive_close_btn');
+        if (!_common_Fuction.click_by_id('taolive_close_btn')) {
+            if (_common_Fuction.click_by_text('返回'))
+                textContains('返回').indexInParent(0).findOne().click();
+            else
+                _common_Fuction.click_by_text('TB1QlFqglFR4u4jSZFPXXanzFXa-40-72');
+        }
     }
 }
 
@@ -951,7 +1125,8 @@ function view_ewailing() {
 
 //签到
 function sign() {
-    _common_Fuction.click_by_text('今日签到');
+    textContains('去签到').depth(23).indexInParent(4).findOne().click();
+    //_common_Fuction.click_by_text('去签到');
     sleep(2000);
     view_live();
     className("android.view.View").clickable(true).depth(16).findOne(3000).click(); //返回元宝中心
@@ -1051,7 +1226,9 @@ function get_lingjiang_remaining() {
                     _common_Fuction.toast_console('领取奖励');
                     element.click();
                     sleep(1000);
-                    if (textContains('看直播60秒').exists()) {
+                    if (textContains('浏览30秒得至少').exists()) {
+                        textContains('浏览30秒得至少').findOne().parent().click();
+                        sleep(2000);
                         view_live();
                     }
                     else if (text('O1CN01LxFPWH1Mmy2hurJW4_!!6000000001478-2-tps-54-54.png_').exists())
@@ -1158,6 +1335,11 @@ function get_tili_remaining() {
             }
             // 饮料领取剩余时间
             let lingqu_button_text = lingqu_button.child(2).text();
+            if (lingqu_button_text == '0') {
+                lingqu_button_text = lingqu_button.child(2).text() + lingqu_button.child(3).text() + ':';
+                lingqu_button_text = lingqu_button_text + lingqu_button.child(5).text() + lingqu_button.child(6).text() + ':';
+                lingqu_button_text = lingqu_button_text + lingqu_button.child(8).text() + lingqu_button.child(9).text();
+            }
             _common_Fuction.toast_console('领取体力:' + lingqu_button_text);
             if (lingqu_button_text == '去领取') {
                 lingqu_button.click();
