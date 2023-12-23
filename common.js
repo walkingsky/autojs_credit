@@ -158,4 +158,19 @@ common.find_images = function (num, img_file, flipup, color, region, threshold) 
     return false;
 }
 
+//生成从minNum到maxNum的随机数
+common.randomNum = function (minNum, maxNum) {
+    switch (arguments.length) {
+        case 1:
+            return parseInt(Math.random() * minNum + 1, 10);
+            break;
+        case 2:
+            return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
+            break;
+        default:
+            return 0;
+            break;
+    }
+}
+
 module.exports = common;
