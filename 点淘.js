@@ -503,6 +503,8 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
         app_taolive.duke.kanzhibo('浏览好货卖场30秒', zhanbushu_button_text, 'view');
         sleep(4000);
         app_taolive.duke.kanzhibo('浏览精选推荐60秒', zhanbushu_button_text, 'view');
+        sleep(4000);
+        app_taolive.duke.kanzhibo('看直播回放5分钟', zhanbushu_button_text, 'live');
         sleep(3000);
     }
 
@@ -530,8 +532,6 @@ app_taolive.duke.zhuanyuanbao = function (dagong) {
     else
         //喝水任务
         this.drink();
-    //sleep(4000);
-    //app_taolive.duke.kanzhibo('看直播回放5分钟', zhanbushu_button_text, 'live');//处理时间太长了
 
 
     if (dagong)
@@ -1092,8 +1092,10 @@ function view_live() {
                 swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 400);
         }
         if (!_common_Fuction.click_by_id('taolive_close_btn')) {
-            if (_common_Fuction.click_by_text('返回'))
+            if (textContains('返回').indexInParent(0).exists())
                 textContains('返回').indexInParent(0).findOne().click();
+            else if (id('back').indexInParent(0).exists())
+                id('back').indexInParent(0).findOne().click();
             else
                 _common_Fuction.click_by_text('TB1QlFqglFR4u4jSZFPXXanzFXa-40-72');
         }
