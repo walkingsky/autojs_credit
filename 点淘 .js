@@ -503,8 +503,8 @@ var _function = {
 
 var app_taolive = {
     /**
- * 点淘签到任务 （从元宝中心开始）
-*/
+     * 点淘签到任务 （从元宝中心开始）
+    */
     diantao_sign: function () {
 
         //双11预热广告弹窗
@@ -592,6 +592,29 @@ var app_taolive = {
          */
         lingtili: function (finish) {
             sleep(3000);
+            // 查看是否可以领取元宝
+            if (idContains('action-main').textContains('领取').exists()) {
+                _common_Function.toast_console('领取元宝奖励');
+                idContains('action-main').textContains('领取').findOne().click();
+                sleep(2000);
+                let zhibo = textMatches('.*秒得.*元宝').findOne(3000);
+                if (zhibo) {
+                    textMatches('.*秒得.*元宝').findOne().click();
+                    _function.view_live();
+                } else if (textContains('我知道了').exists()) {
+                    textContains('我知道了').indexInParent(6).findOne().click();
+                }
+                sleep(2000);
+                if (idContains('action-main').textContains('去打工赚钱').exists()) {
+                    idContains('action-main').textContains('去打工赚钱').findOne().click();
+                    sleep(1000);
+                    if (_common_Function.click_by_text('+888'))
+                        _common_Function.click_by_text('开始打工');
+                    sleep(2000);
+                }
+            } else {
+                _common_Function.toast_console('领取元宝还未到时间');
+            }
             try {
                 let zhantili_button_text = 'O1CN01vWC7gg20DmKvWaURW_!!6000000006816-2-tps-248-246.png_';
                 //点击空白，关闭可能打开的任务列表
@@ -821,7 +844,7 @@ var app_taolive = {
                 app_taolive.duke.kanzhibo('看好物视频60秒', zhanbushu_button_text, 'live');
                 sleep(4000);
                 this.drink();
-                app_taolive.duke.kanzhibo('看精彩内容30秒', zhanbushu_button_text, 'live');
+                app_taolive.duke.kanzhibo('看精彩内容30秒', zhanbushu_button_text, 'view');
                 sleep(4000);
                 app_taolive.duke.kanzhibo('浏览省钱专区', zhanbushu_button_text, 'view');
                 sleep(4000);

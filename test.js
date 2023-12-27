@@ -1,4 +1,5 @@
+if (idContains('action-main').textContains('领取').exists())
 
-
-
-back();
+    log('11111');
+else
+    log('2222');
