@@ -368,7 +368,34 @@ var _function = {
         className('android.view.View').depth(16).indexInParent(1).findOne(2000).click();
         return remaining;
     },
-
+    /**
+         * 查看是打工是否完成，领取元宝
+         */
+    lingyuanbao: function () {
+        // 查看是否可以领取元宝
+        if (idContains('action-main').textContains('领取').exists()) {
+            _common_Function.toast_console('领取元宝奖励');
+            idContains('action-main').textContains('领取').findOne().click();
+            sleep(2000);
+            let zhibo = textMatches('.*秒得.*元宝').findOne(3000);
+            if (zhibo) {
+                textMatches('.*秒得.*元宝').findOne().click();
+                _function.view_live();
+            } else if (textContains('我知道了').exists()) {
+                textContains('我知道了').findOne().click();
+            }
+            sleep(2000);
+            if (idContains('action-main').textContains('去打工赚钱').exists()) {
+                idContains('action-main').textContains('去打工赚钱').findOne().click();
+                sleep(1000);
+                if (_common_Function.click_by_text('+888'))
+                    _common_Function.click_by_text('开始打工');
+                sleep(2000);
+            }
+        } else {
+            _common_Function.toast_console('领取元宝还未到时间');
+        }
+    },
     /**
      * 获取打工鸭领取体力的剩余时间（从元宝中心开始）
      * @returns int  -1:执行错误
@@ -387,9 +414,12 @@ var _function = {
                 return -1;
             }
             while (true) {
+
                 //点击空白，关闭可能打开的任务列表
                 click(400, 300);
                 sleep(1000);
+                // 查看是否可以领取元宝
+                this.lingyuanbao();
                 let lingqu_button = idContains('action-drink').findOne(2000);
                 if (text('已领完').exists()) { //体力已领完
                     remaining = -1;
@@ -593,28 +623,7 @@ var app_taolive = {
         lingtili: function (finish) {
             sleep(3000);
             // 查看是否可以领取元宝
-            if (idContains('action-main').textContains('领取').exists()) {
-                _common_Function.toast_console('领取元宝奖励');
-                idContains('action-main').textContains('领取').findOne().click();
-                sleep(2000);
-                let zhibo = textMatches('.*秒得.*元宝').findOne(3000);
-                if (zhibo) {
-                    textMatches('.*秒得.*元宝').findOne().click();
-                    _function.view_live();
-                } else if (textContains('我知道了').exists()) {
-                    textContains('我知道了').indexInParent(6).findOne().click();
-                }
-                sleep(2000);
-                if (idContains('action-main').textContains('去打工赚钱').exists()) {
-                    idContains('action-main').textContains('去打工赚钱').findOne().click();
-                    sleep(1000);
-                    if (_common_Function.click_by_text('+888'))
-                        _common_Function.click_by_text('开始打工');
-                    sleep(2000);
-                }
-            } else {
-                _common_Function.toast_console('领取元宝还未到时间');
-            }
+            _function.lingyuanbao();
             try {
                 let zhantili_button_text = 'O1CN01vWC7gg20DmKvWaURW_!!6000000006816-2-tps-248-246.png_';
                 //点击空白，关闭可能打开的任务列表
@@ -720,6 +729,7 @@ var app_taolive = {
             }
             _common_Function.toast_console('完成领取步数奖励');
         },
+
         /**
          * 赚元宝的看直播任务
          * @param {text} title 看直播类型标题
