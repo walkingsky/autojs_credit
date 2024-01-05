@@ -830,7 +830,10 @@ var app_taolive = {
                 app_taolive.duke.kanzhibo('看小视频30秒', zhanbushu_button_text, 'live');
                 sleep(4000);
                 this.lingtili();
-                app_taolive.duke.kanzhibo('看直播3分钟', zhanbushu_button_text, 'live');
+                app_taolive.duke.kanzhibo('看直播60秒', zhanbushu_button_text, 'live');
+                sleep(4000);
+                this.lingtili();
+                app_taolive.duke.kanzhibo('浏览优选商品', zhanbushu_button_text, 'view');
                 sleep(4000);
                 this.lingtili();
                 app_taolive.duke.kanzhibo('浏览精选推荐', zhanbushu_button_text, 'view');
@@ -844,10 +847,20 @@ var app_taolive = {
                 app_taolive.duke.kanzhibo('浏览好货卖场', zhanbushu_button_text, 'view');
                 sleep(4000);
                 this.lingtili();
+                app_taolive.duke.kanzhibo('看直播3分钟', zhanbushu_button_text, 'live');
+                sleep(4000);
+                this.lingtili();
+                app_taolive.duke.kanzhibo('看好看直播间', zhanbushu_button_text, 'live');
+                sleep(4000);
+                this.lingtili();
+
                 app_taolive.duke.kanzhibo('看点淘羊毛直播间', zhanbushu_button_text, 'live');
             } else {
                 //走路鸭
                 sleep(2000);
+                app_taolive.duke.kanzhibo('浏览元宝商城', zhanbushu_button_text, 'view');
+                sleep(4000);
+                this.drink();
                 app_taolive.duke.kanzhibo('看直播60秒', zhanbushu_button_text, 'live');
                 sleep(4000);
                 this.drink();
@@ -872,8 +885,8 @@ var app_taolive = {
                 sleep(4000);
                 app_taolive.duke.kanzhibo('看好看直播间2分钟', zhanbushu_button_text, 'live');
                 this.drink();
-                //sleep(4000); //暂时跳过，太耗时间
-                //app_taolive.duke.kanzhibo('看直播回放5分钟', zhanbushu_button_text, 'live');
+                sleep(4000); //暂时跳过，太耗时间
+                app_taolive.duke.kanzhibo('看直播回放5分钟', zhanbushu_button_text, 'live');
                 sleep(3000);
             }
 
