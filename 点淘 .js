@@ -92,7 +92,8 @@ var _function = {
      */
     view: function (live) {
         _common_Function.toast_console('进入view函数:(' + live + ')');
-        sleep(5000);
+        swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 400);
+        sleep(4000);
 
         // 判断是否有活动弹层
         if (id('bg-img').className('android.widget.Image').exists()) {
@@ -102,7 +103,7 @@ var _function = {
         let i = 0;
         try {
             while (true) {
-                this.op_refuse();
+                //this.op_refuse();
                 //翻倍操作
                 if (id('gold_action_text').exists())
                     if (id('gold_action_text').findOne().text() == '点击翻倍' || id('gold_action_text').findOne().text() == '点击 x4 倍')
@@ -112,16 +113,20 @@ var _function = {
                 if (textContains('6000000007641-2-tps').exists())
                     textContains('6000000007641-2-tps').findOne().click();
 
-                if (!(textContains('后完成').exists() || textContains('后发奖').exists() || textContains('后领奖').exists())) {
+                if (!(textContains('后完成').exists() || textContains('后发奖').exists() || textContains('后领奖').exists() || textContains('滑动浏览').exists())) {
                     sleep(3000); //偶尔会有未完成任务提示，故增加延时
                     break;
                 }
-                sleep(2000);
+                sleep(1000);
                 i++;
                 //定时划屏
-                if (i % 10 == 0) {
+                let a = 5; //设定划屏间隔 6* sleep(1000)
+                if (live) {
+                    a = 15
+                }
+                if (i % a == 0) {
                     swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 400);
-                    sleep(2000);
+                    sleep(1000);
                 }
 
             }
@@ -153,7 +158,7 @@ var _function = {
     view_live: function () {
         _common_Function.toast_console('进入view_live函数');
         sleep(4000);
-        this.op_refuse();
+        //this.op_refuse();
         live_title = '';
         if (textContains('后完成').exists() || textContains('后发奖').exists() || textContains('滑动浏览').exists() || textContains('后领奖').exists()) {  //直接进入的，不用点击“看直播60秒按钮”
             var live = true;
@@ -171,7 +176,7 @@ var _function = {
         if (live) {
             var i = 0;
             while (true) {
-                this.op_refuse();
+                //this.op_refuse();
                 //翻倍操作
                 if (id('gold_action_text').exists())
                     if (id('gold_action_text').findOne().text() == '点击翻倍' || id('gold_action_text').findOne().text() == '点击 x4 倍')
@@ -580,6 +585,99 @@ var app_taolive = {
         */
         //className("android.view.View").clickable(true).depth(25).indexInParent(1).findOne().click();
     },
+    //今日签到
+    today_sign: {
+
+        do_task: function (task_name, kind) {
+            if (text(task_name).indexInParent(0).exists()) {
+                _common_Function.toast_console('今日签到"' + task_name + '":进入任务');
+                while (true) {
+                    _common_Function.toast_console('今日签到 执行:' + task_name);
+                    let p = text(task_name).indexInParent(0).findOne().parent();
+                    if (p.child(5).text() == '去完成') {
+                        p.parent().parent().click();
+                        sleep(1000);
+                        if (kind == 'view')
+                            _function.view(false);
+                        else
+                            _function.view_live();
+                        _common_Function.toast_console('今日签到 执行:' + task_name + '完成一次');
+                        sleep(500);
+                    } else {
+                        _common_Function.toast_console('今日签到 执行:' + task_name + '已完成');
+                        break;
+                    }
+                }
+            } else {
+                _common_Function.toast_console('今日签到"' + task_name + '":任务未找到');
+            }
+            if (textContains('2-tps-60-60.png_').exists())
+                textContains('2-tps-60-60.png_').findOne().click();
+            sleep(2000);
+        },
+        zhuanyuanbao: function () {
+            //做任务得元宝
+            _common_Function.toast_console('做任务得元宝');
+            swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 400);
+            swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 400);
+            try {
+
+                var i = 0;
+                while (true) {
+                    if (i % 2 == 0)
+                        swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.7, 600);
+                    sleep(1000);
+                    if (textContains('今日任务已完成').exists())
+                        break;
+                    i++;
+                }
+                sleep(2000);
+                swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 400);
+
+
+            } catch (error) {
+                _common_Function.toast_console('做任务得元宝错误:' + error);
+            }
+            _common_Function.toast_console('完成做任务得元宝');
+        },
+        open_task_page: function () {
+            //等待 提示
+            sleep(5000);
+            if (textContains('做任务赚更多元宝').exists()) {
+                textContains('做任务赚更多元宝').findOne().click();
+            }
+
+            if (textContains('今日签到').exists()) {
+                textContains('今日签到').findOne().parent().click();
+                sleep(5000);
+                textContains('tps-798-80.png_').findOne(5000);
+                this.do_task('看精选推荐30秒', 'view');
+                sleep(2000);
+                this.do_task('看小视频30秒', 'live');
+                sleep(2000);
+                this.do_task('看省钱专区30秒', 'view');
+                sleep(2000);
+                this.do_task('看精彩内容30秒', 'view');
+                sleep(2000);
+                this.do_task('看上新好物30秒', 'view');
+                sleep(2000);
+                this.zhuanyuanbao();
+                sleep(2000);
+                //返回 退出
+                back();
+
+                _common_Function.toast_console('今日签到:任务完成');
+            } else {
+                _common_Function.toast_console('今日签到:没找到元素');
+            }
+        }
+
+    },
+
+    //睡觉赚元宝
+    sleep_yuanbao: {
+
+    },
 
     //走路鸭
     duke: {
@@ -764,11 +862,11 @@ var app_taolive = {
                         if (_temp_bool) {
                             //if ((kanzhibo_temp.parent().child(5).text() == '去完成' || kanzhibo_temp.parent().child(5).text() == '去观看') && kanzhibo_temp.parent().child(0).text().search('分钟') == -1) {
                             kanzhibo_temp.click();
-                            if (live == 'live')
+                            if (live == 'view')
                                 _function.view(true);
-                            else if (live == 'view')
+                            else if (live == 'live')
                                 _function.view_live();
-                            sleep(3000);
+                            sleep(1000);
                             let temp = text(zhanbushu_button_text).findOne(5000);
                             if (temp) {
                                 temp.click();
@@ -780,7 +878,7 @@ var app_taolive = {
                             j++;
                         }
                     }
-                    sleep(2000);
+                    sleep(1000);
                     if (i == j)
                         break;
                 }
@@ -804,6 +902,18 @@ var app_taolive = {
                     return;
                 }
                 zhuanqu_button_text = zhuantili_button_text;
+                sleep(3000);
+
+                if (idContains('sign').textContains('签到').exists()) {
+                    idContains('sign').textContains('签到').findOne().click();
+                    sleep(1000);
+                    if (textContains('浏览30秒得至少').exists()) {
+                        textContains('浏览30秒得至少').findOne().parent().click();
+                        sleep(2000);
+                        _function.view(false);
+                        sleep(1000);
+                    }
+                }
             }
             else {
                 textContains('走路赚元宝').findOne(3000).click();
@@ -851,6 +961,12 @@ var app_taolive = {
                 sleep(4000);
                 this.lingtili();
                 app_taolive.duke.kanzhibo('看好看直播间', zhanbushu_button_text, 'live');
+                sleep(4000);
+                this.lingtili();
+                app_taolive.duke.kanzhibo('看精彩内容30秒', zhanbushu_button_text, 'view');
+                sleep(4000);
+                this.lingtili();
+                app_taolive.duke.kanzhibo('看黄金档直播2分钟', zhanbushu_button_text, 'live');
                 sleep(4000);
                 this.lingtili();
 
@@ -1123,7 +1239,7 @@ var app_taolive = {
         if (!renwu_button)
             renwu_button = textContains(renwu).depth(27).indexInParent(2).findOne(2000);
         try {
-            _function.op_refuse();
+            //_function.op_refuse();
             if (renwu_button) {
                 var start = Date.parse(new Date()) / 1000;
                 renwu_button.parent().click();
@@ -1131,7 +1247,7 @@ var app_taolive = {
                 sleep(2000);
                 var i = 0;
                 while (true) {
-                    _function.op_refuse();
+                    //_function.op_refuse();
                     //翻倍操作
                     if (id('gold_action_text').exists())
                         if (id('gold_action_text').findOne().text() == '点击翻倍' || id('gold_action_text').findOne().text() == '点击 x4 倍')
@@ -1207,7 +1323,7 @@ var app_taolive = {
 auto.waitFor()
 
 //设置起始步骤
-let start_step = 3;
+let start_step = 2;
 sleep(5000);
 
 if (start_step <= 1)
@@ -1216,7 +1332,8 @@ if (start_step <= 1)
 if (start_step <= 2) {
 
     //签到
-    app_taolive.diantao_sign();
+    //app_taolive.diantao_sign();
+    app_taolive.today_sign.open_task_page();
 }
 
 if (start_step <= 3) {
@@ -1241,6 +1358,7 @@ if (start_step <= 5) {
     sleep(2000);
     //打工赚元宝
     app_taolive.duke.zhuanyuanbao(true);
+    exit;
 }
 
 if (start_step <= 6) {
