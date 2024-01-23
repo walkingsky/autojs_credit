@@ -195,6 +195,7 @@ var _function = {
                 }
             }
             //返回
+            sleep(1000)
             if (!back()) { //原来点击按钮的操作，作为一个备份方案
                 _common_Function.toast_console('按键返回没有生效');
                 if (!_common_Function.click_by_id('taolive_close_btn')) {
@@ -282,7 +283,8 @@ var _function = {
                 let c = className('android.view.View').depth(26).indexInParent(1).find();
                 let d = className('android.view.View').depth(30).indexInParent(1).find();
                 let e = className('android.view.View').depth(27).indexInParent(1).find();
-                let a = [].concat(b, c, d, e);
+                let f = className('android.view.View').depth(31).indexInParent(1).find();
+                let a = [].concat(b, c, d, e, f);
                 if (a.length == 0) {
                     _common_Function.toast_console('没找到组件');
                     return -1;
@@ -393,8 +395,10 @@ var _function = {
             if (idContains('action-main').textContains('去打工赚钱').exists()) {
                 idContains('action-main').textContains('去打工赚钱').findOne().click();
                 sleep(1000);
-                if (_common_Function.click_by_text('+888'))
+                if (_common_Function.click_by_text('+888')) {
+                    sleep(1000);
                     _common_Function.click_by_text('开始打工');
+                }
                 sleep(2000);
             }
         } else {
@@ -1238,6 +1242,8 @@ var app_taolive = {
             renwu_button = textContains(renwu).depth(23).indexInParent(2).findOne(2000);
         if (!renwu_button)
             renwu_button = textContains(renwu).depth(27).indexInParent(2).findOne(2000);
+        if (!renwu_button)
+            renwu_button = textContains(renwu).indexInParent(2).findOne(2000);
         try {
             //_function.op_refuse();
             if (renwu_button) {
