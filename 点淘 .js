@@ -157,7 +157,7 @@ var _function = {
      */
     view_live: function () {
         _common_Function.toast_console('进入view_live函数');
-        sleep(4000);
+        sleep(8000); //有时候 计时 控件捕捉不到，加大延时看能否确保能够捕捉到
         //this.op_refuse();
         live_title = '';
         if (textContains('后完成').exists() || textContains('后发奖').exists() || textContains('滑动浏览').exists() || textContains('后领奖').exists()) {  //直接进入的，不用点击“看直播60秒按钮”
@@ -171,12 +171,17 @@ var _function = {
                 live_title = '滑动浏览';
         } else
             var live = _common_Function.click_by_textcontains('看直播60秒'); //看直播的按钮
+        _common_Function.toast_console('live_title =' + live_title);
         sleep(1000);
 
         if (live) {
             var i = 0;
             while (true) {
                 //this.op_refuse();
+                //关闭弹窗
+                if (className('android.widget.Image').textContains('7508-2-tps-56-56').exists()) {
+                    className('android.widget.Image').textContains('7508-2-tps-56-56').findOne(2000).click();
+                }
                 //翻倍操作
                 if (id('gold_action_text').exists())
                     if (id('gold_action_text').findOne().text() == '点击翻倍' || id('gold_action_text').findOne().text() == '点击 x4 倍')
@@ -207,6 +212,7 @@ var _function = {
                         _common_Function.click_by_text('TB1QlFqglFR4u4jSZFPXXanzFXa-40-72');
                 }
             } else {
+                sleep(1000);
                 _common_Function.toast_console('按键返回操作返回成功');
             }
         }
@@ -873,7 +879,7 @@ var app_taolive = {
                             //if ((kanzhibo_temp.parent().child(5).text() == '去完成' || kanzhibo_temp.parent().child(5).text() == '去观看') && kanzhibo_temp.parent().child(0).text().search('分钟') == -1) {
                             kanzhibo_temp.click();
                             if (live == 'view')
-                                _function.view(true);
+                                _function.view();
                             else if (live == 'live')
                                 _function.view_live();
                             sleep(1000);
@@ -1341,7 +1347,7 @@ var app_taolive = {
 auto.waitFor()
 
 //设置起始步骤
-let start_step = 2;
+let start_step = 3;
 sleep(5000);
 
 if (start_step <= 1)
