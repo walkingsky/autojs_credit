@@ -429,8 +429,8 @@ var _function = {
                 sleep(1000);
                 // 查看是否可以领取元宝
                 this.lingyuanbao();
-                let lingqu_button = idContains('action-drink').findOne(2000);
-                if (text('已领完').exists()) { //体力已领完
+                let lingqu_button = idContains('action-drink').findOne(5000);
+                if (className('android.view.View').textContains('已领完').exists() || lingqu_button == null) { //体力已领完
                     remaining = -1;
                     break;
                 }
@@ -465,7 +465,8 @@ var _function = {
         }
 
         _common_Function.toast_console('领取剩余时间：' + remaining);
-        className('android.view.View').depth(16).indexInParent(0).findOne(2000).click();
+        //className('android.view.View').depth(16).indexInParent(0).findOne(2000).click();
+        back();
         return remaining;
     },
 
@@ -727,15 +728,16 @@ var app_taolive = {
             // 查看是否可以领取元宝
             _function.lingyuanbao();
             try {
-                let zhantili_button_text = 'O1CN01vWC7gg20DmKvWaURW_!!6000000006816-2-tps-248-246.png_';
+                let zhantili_button_text = '6816-2-tps-248-246.png';
                 //点击空白，关闭可能打开的任务列表
                 click(400, 300);
                 sleep(1000);
                 let lingqu_button = idContains('action-drink').findOne(2000);
-                if (text('已领完').exists()) { //体力已领完
+                if (text('已领完').exists() || lingqu_button == null) { //体力已领完
                     _common_Function.toast_console('领取体力:已领完');
                     if (undefined == finish) {
-                        _common_Function.click_by_text(zhantili_button_text);
+                        //_common_Function.click_by_textcontains(zhantili_button_text);
+                        className('android.widget.Image').textContains(zhantili_button_text).findOne(2000).click();
                         sleep(3000);
                     }
                     return;
@@ -751,8 +753,12 @@ var app_taolive = {
                     sleep(3000);
                 }
                 //console.log(lingqu_button_text);
-                if (undefined == finish)
-                    _common_Function.click_by_text(zhantili_button_text);
+                if (undefined == finish) {
+                    //back();
+                    _common_Function.toast_console('打开赚体力任务列表');
+                    //_common_Function.click_by_textcontains(zhantili_button_text);
+                    className('android.widget.Image').textContains(zhantili_button_text).findOne(2000).click();
+                }
                 sleep(3000);
             } catch (error) {
                 _common_Function.toast_console('领取体力error:' + error);
@@ -1199,14 +1205,16 @@ var app_taolive = {
                         if (i % 2 == 0)
                             swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 300);
                         sleep(1000);
-                        if (textContains('今日任务已完成').exists())
+                        if (textContains('今日浏览任务已完成').exists())
                             break;
                         i++;
                     }
                     sleep(2000);
                     swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 400);
 
-                    className('android.view.View').depth(14).indexInParent(9).findOne(3000).click();
+                    //className('android.view.View').depth(14).indexInParent(9).findOne(3000).click();
+                    className('android.view.View').depth(21).indexInParent(2).findOne(3000).click();
+                    //back();
                     sleep(1000);
                 } catch (error) {
                     _common_Function.toast_console('看商品赚体力错误:' + error);
@@ -1219,9 +1227,13 @@ var app_taolive = {
             if (dagong) {
                 if (className('android.view.View').depth(16).indexInParent(0).exists())
                     className('android.view.View').depth(16).indexInParent(0).findOne(2000).click();
+                else
+                    back();
             } else {
                 if (className('android.view.View').depth(16).indexInParent(1).exists())
                     className('android.view.View').depth(16).indexInParent(1).findOne(2000).click();
+                else
+                    back();
             }
 
             sleep(1000);
