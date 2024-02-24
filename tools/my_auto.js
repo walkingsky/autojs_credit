@@ -120,17 +120,44 @@ try {
                 }
                 //if (desc('adx').depth(12).exists(0))
                 //    desc('adx').depth(12).findOne(2000).click();
+                if (text('0s后可领取奖励').exists()) {
+                    sleep(2000);
+                    break;
+                }
             } else {
                 break;
             }
         }
         sleep(1000);
-        textContains('跳过').findOne(2000).click();
+        if (textContains('跳过').exists()) {
+            textContains('跳过').findOne(2000).click();
+            _common_Function.toast_console('1');
+        }
         sleep(3000);
-        if (className('android.widget.ImageView').depth(5).exists())
+        if (className('android.widget.ImageView').depth(5).exists()) {
             className('android.widget.ImageView').depth(5).findOne(2000).click();
-        else
+            _common_Function.toast_console('2');
+        }
+        else if (className('android.widget.ImageView').depth(5).indexInParent(3).exists()) {
+            _common_Function.toast_console('3');
             className('android.widget.ImageView').depth(5).indexInParent(3).findOne(2000).click();
+        }
+        else {
+            sleep(10000);
+            _common_Function.toast_console('4');
+            if (className('android.widget.ImageView').depth(5).exists()) {
+                _common_Function.toast_console('5');
+                className('android.widget.ImageView').depth(5).findOne(2000).click();
+            }
+            else if (className('android.widget.ImageView').depth(5).indexInParent(3).exists()) {
+                _common_Function.toast_console('6');
+                className('android.widget.ImageView').depth(5).indexInParent(3).findOne(2000).click();
+            }
+            else {
+                _common_Function.toast_console('7');
+                //back();
+            }
+        }
         sleep(1000);
         i = i + 1;
     }

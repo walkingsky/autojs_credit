@@ -398,18 +398,20 @@ var _function = {
          */
     lingyuanbao: function () {
         // 查看是否可以领取元宝
-        if (idContains('action-main').textContains('领取').exists()) {
-            _common_Function.toast_console('领取元宝奖励');
-            idContains('action-main').textContains('领取').findOne(3000).click();
-            sleep(2000);
-            let zhibo = textMatches('.*秒得.*元宝').findOne(3000);
-            if (zhibo) {
-                textMatches('.*秒得.*元宝').findOne(3000).click();
-                _function.view_live();
-            } else if (textContains('我知道了').exists()) {
-                textContains('我知道了').findOne(3000).click();
+        if (idContains('action-main').exists()) {
+            let _action_main = idContains('action-main').className('android.view.View').findOne(2000);
+            if (_action_main.child(0).text() == '领取' && _action_main.child(2).text() == '元宝') {
+                _common_Function.toast_console('领取元宝奖励');
+                _action_main.click();
+                sleep(2000);
+                let zhibo = textMatches('.*秒得.*元宝').findOne(3000);
+                if (zhibo) {
+                    textMatches('.*秒得.*元宝').findOne(3000).click();
+                    _function.view_live();
+                } else if (textContains('我知道了').exists()) {
+                    textContains('我知道了').findOne(3000).click();
+                }
             }
-
 
         } else {
             _common_Function.toast_console('领取元宝还未到时间');
@@ -812,14 +814,18 @@ var app_taolive = {
         //领奖
         get_prize: function () {
             if (textContains('领奖').className('android.view.View').indexInParent(4).exists()) {
+                _common_Function.toast_console('点击领奖');
                 textContains('领奖').className('android.view.View').indexInParent(4).findOne().click();
                 sleep(1000);
                 _function.view_live();
                 sleep(1000);
             } else if (textContains('直播间').className('android.view.View').indexInParent(4).exists()) {
+                _common_Function.toast_console('点击直播间');
                 if (textContains('tps-54-54.png').className('android.widget.Image').exists())
                     textContains('tps-54-54.png').className('android.widget.Image').findOne().click();
             }
+            else
+                _common_Function.toast_console('没有弹窗');
             sleep(1000);
         }
 
@@ -839,14 +845,19 @@ var app_taolive = {
                     sleep(1000);
                 }
 
-                if (textContains('开始晚睡').className('android.view.View').exists()) {
+                if (textContains('开始睡觉').className('android.view.View').exists()) {
+                    textContains('开始睡觉').className('android.view.View').findOne(2000).click();
+                    sleep(1000);
+                }
+				
+				if (textContains('开始晚睡').className('android.view.View').exists()) {
                     textContains('开始晚睡').className('android.view.View').findOne(2000).click();
                     sleep(1000);
                 }
 
                 if (text('晚睡起床').className('android.view.View').exists()
                     || text('午睡起床').className('android.view.View').exists()) {
-                    idContains('mainActionButton').className('android.view.View').findOne().click();
+                    idContains('mainActionButton').className('android.view.View').findOne(2000).click();
                     _common_Function.toast_console('起床 按钮点击完成');
                     sleep(1000);
                     let zhibo = textMatches(/[^\d]*\d*秒得\d*元宝/).className('android.view.View').findOne(3000);
