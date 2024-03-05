@@ -302,7 +302,8 @@ var _function = {
                 let d = className('android.view.View').depth(30).indexInParent(1).find();
                 let e = className('android.view.View').depth(27).indexInParent(1).find();
                 let f = className('android.view.View').depth(31).indexInParent(1).find();
-                let a = [].concat(b, c, d, e, f);
+                let g = className('android.view.View').depth(12).indexInParent(1).find();
+                let a = [].concat(b, c, d, e, f, g);
                 if (a.length == 0) {
                     _common_Function.toast_console('没找到组件');
                     return -1;
@@ -390,7 +391,12 @@ var _function = {
         }
 
         _common_Function.toast_console('领奖剩余时间：' + remaining);
-        className('android.view.View').depth(16).indexInParent(1).findOne(2000).click();
+        if (className('android.view.View').depth(16).indexInParent(1).exists())
+            className('android.view.View').depth(16).indexInParent(1).findOne(2000).click();
+        else if (className('android.view.View').depth(8).indexInParent(1).exists())
+            className('android.view.View').depth(8).indexInParent(1).findOne(2000).click();
+        else
+            back();
         return remaining;
     },
     /**
@@ -399,8 +405,8 @@ var _function = {
     lingyuanbao: function () {
         // 查看是否可以领取元宝
         if (idContains('action-main').exists()) {
-            let _action_main = idContains('action-main').className('android.view.View').findOne(2000);
-            if (_action_main.child(0).text() == '领取' && _action_main.child(2).text() == '元宝') {
+            let _action_main = idContains('action-main').className('android.view.View').findOne(5000);
+            if (_action_main.childCount > 2 && _action_main.child(0).text() == '领取' && _action_main.child(2).text() == '元宝') {
                 _common_Function.toast_console('领取元宝奖励');
                 _action_main.click();
                 sleep(2000);
@@ -761,6 +767,8 @@ var app_taolive = {
 
             //退回到元宝中心
             sleep(1000);
+            this.get_prize();
+            sleep(1000);
             back();
             sleep(2000);
             _common_Function.toast_console('退出赚钱卡任务');
@@ -849,8 +857,8 @@ var app_taolive = {
                     textContains('开始睡觉').className('android.view.View').findOne(2000).click();
                     sleep(1000);
                 }
-				
-				if (textContains('开始晚睡').className('android.view.View').exists()) {
+
+                if (textContains('开始晚睡').className('android.view.View').exists()) {
                     textContains('开始晚睡').className('android.view.View').findOne(2000).click();
                     sleep(1000);
                 }
@@ -1023,6 +1031,8 @@ var app_taolive = {
             try { //出发按钮
                 let chufa_button = text('出发').depth(18).indexInParent(2).findOne(3000);
                 if (!chufa_button)
+                    chufa_button = text('出发').depth(10).indexInParent(2).findOne(3000);
+                if (!chufa_button)
                     chufa_button = text('今日步数已完成').depth(16).indexInParent(1).findOne(3000);
                 if (chufa_button) {
                     chufa_button.parent().click();
@@ -1033,7 +1043,9 @@ var app_taolive = {
                         text('O1CN012FPExu1acnrUXXUgf_!!6000000003351-2-tps-120-120.png_').findOne().click();
                     let did = false;
                     while (true) {
-                        let yuanbao = textMatches(/\d+元宝\d*步/).depth(16).findOne(1000);
+                        let yuanbao = textMatches(/\d*元宝\d*步/).depth(16).findOne(1000);
+                        if (yuanbao == null)
+                            yuanbao = textMatches(/\d*元宝\d*步/).depth(8).findOne(1000);
                         if (yuanbao) {
                             yuanbao.click();
                             sleep(2000);
@@ -1075,7 +1087,12 @@ var app_taolive = {
 
                 }
                 //点击返回按钮，退出到元宝中心
-                className('android.view.View').depth(16).indexInParent(1).findOne(2000).click();
+                if (className('android.view.View').depth(16).indexInParent(1).exists())
+                    className('android.view.View').depth(16).indexInParent(1).findOne(2000).click();
+                else if (className('android.view.View').depth(8).indexInParent(1))
+                    className('android.view.View').depth(8).indexInParent(1).findOne(2000).click();
+                else
+                    back();
             } catch (error) {
                 _common_Function.toast_console('领取步数奖励error:' + error);
             }
@@ -1457,7 +1474,8 @@ var app_taolive = {
                     swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 400);
 
                     //className('android.view.View').depth(14).indexInParent(9).findOne(3000).click();
-                    className('android.view.View').depth(21).indexInParent(2).findOne(3000).click();
+                    if (className('android.view.View').depth(6).indexInParent(6).exists())
+                        className('android.view.View').depth(21).indexInParent(2).findOne(3000).click();
                     //back();
                     sleep(1000);
                 } catch (error) {
@@ -1514,7 +1532,8 @@ var app_taolive = {
                     if (id('gold_action_text').exists())
                         if (id('gold_action_text').findOne().text() == '点击翻倍' || id('gold_action_text').findOne().text() == '点击 x4 倍')
                             _common_Function.click_by_id('gold_action_layout');
-                    if (!id('gold_turns_text').depth(6).exists() && !id('gold_turns_text').depth(9).exists())
+                    if (!id('gold_turns_text').depth(6).exists() && !id('gold_turns_text').depth(9).exists()
+                        && !id('gold_turns_text').depth(2).exists())
                         break;
                     if (Date.parse(new Date()) / 1000 - start > remaining_time) {
                         break;
@@ -1571,8 +1590,8 @@ var app_taolive = {
         //点击返回按钮，回到元宝中心
         if (id('taolive_close_btn').exists())
             id('taolive_close_btn').findOne().click()
-        if (id('back').depth(12).exists())
-            id('back').depth(12).findOne().click();
+        if (id('back').exists())
+            id('back').findOne().click();
         _common_Function.toast_console('完成' + renwu);
     }
 
