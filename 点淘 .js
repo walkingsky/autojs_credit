@@ -406,7 +406,7 @@ var _function = {
         // 查看是否可以领取元宝
         if (idContains('action-main').exists()) {
             let _action_main = idContains('action-main').className('android.view.View').findOne(5000);
-            if (_action_main.childCount > 2 && _action_main.child(0).text() == '领取' && _action_main.child(2).text() == '元宝') {
+            if (_action_main.childCount() > 2 && _action_main.child(0).text() == '领取' && _action_main.child(2).text() == '元宝') {
                 _common_Function.toast_console('领取元宝奖励');
                 _action_main.click();
                 sleep(2000);
@@ -765,12 +765,19 @@ var app_taolive = {
                 _common_Function.toast_console('赚钱卡组件没找到');
             }
 
-            //退回到元宝中心
-            sleep(1000);
-            this.get_prize();
-            sleep(1000);
-            back();
-            sleep(2000);
+
+            while (textContains('加速赚更多元宝').className('android.view.View').exists()) {
+                //退回到元宝中心
+                sleep(1000);
+                this.get_prize();
+                sleep(1000);
+                //back();
+                if (textContains('000001102-55-tps-52').className('android.widget.Image').exists()) {
+                    textContains('000001102-55-tps-52').className('android.widget.Image').findOne().click();
+                } else
+                    back();
+                sleep(2000);
+            }
             _common_Function.toast_console('退出赚钱卡任务');
         },
         //加速赚更多元宝列表任务
@@ -1607,94 +1614,122 @@ auto.waitFor()
 let start_step = 2;
 sleep(5000);
 
-if (start_step <= 1)
-    _function.start();
+var step_time = [0, 7, 13, 16, 18, 21]; //重新开始执行的整点时间列表
+var step_time_cnt = 0;
+let _hours = new Date().getHours();
+// 获取初始时间 在数组中的位置
+step_time.forEach(function (item, index) {
+    _common_Function.toast_console("item:" + item + " index:" + index + " hours:" + _hours);
+    if (_hours >= item)
+        step_time_cnt = index;
+});
 
-if (start_step <= 2) {
+_common_Function.toast_console("初始时间：" + step_time[step_time_cnt] + "计数：" + step_time_cnt);
 
-    //签到
-    //app_taolive.diantao_sign();
-    app_taolive.today_sign.open_task_page();
-}
+while (true) {
 
-if (start_step <= 2.5) {
-    //转到元宝中心
-    _function.yuanbaozhongxin();
-    //赚钱卡
-    if (app_taolive.make_money_card.is_have()) {
-        app_taolive.make_money_card.do_task();
+    if (start_step <= 1)
+        _function.start();
+
+    if (start_step <= 2) {
+
+        //签到
+        //app_taolive.diantao_sign();
+        app_taolive.today_sign.open_task_page();
+    }
+
+    if (start_step <= 2.5) {
+        //转到元宝中心
+        _function.yuanbaozhongxin();
+        //赚钱卡
+        if (app_taolive.make_money_card.is_have()) {
+            app_taolive.make_money_card.do_task();
+        }
+    }
+
+    if (start_step <= 2.6) {
+        //转到元宝中心
+        _function.yuanbaozhongxin();
+        //进入睡觉赚元宝
+        app_taolive.sleep_yuanbao.do_task();
+    }
+
+    if (start_step <= 3) {
+        //转到元宝中心
+        _function.yuanbaozhongxin();
+        sleep(2000);
+        //走路赚元宝
+        app_taolive.duke.zhuanyuanbao();
+    }
+
+    if (start_step <= 4) {
+        //转到元宝中心
+        _function.yuanbaozhongxin();
+        sleep(2000);
+        //领取步数奖励
+        app_taolive.duke.lingbushu();
+    }
+
+    if (start_step <= 5) {
+        //转到元宝中心
+        _function.yuanbaozhongxin();
+        sleep(2000);
+        //打工赚元宝
+        app_taolive.duke.zhuanyuanbao(true);
+        exit;
+    }
+
+    if (start_step <= 6) {
+        //转到元宝中心
+        _function.yuanbaozhongxin();
+        sleep(2000);
+        //长线任务
+        let i = 1;
+        while (true) {
+            sleep(2000);
+            let lingjiang_remaining = _function.get_lingjiang_remaining();
+            sleep(2000);
+            let drink_remaining = _function.get_drink_remaining();
+            sleep(2000);
+            let tili_remaining = _function.get_tili_remaining();
+            //找到最小的等待时间
+            let remaining_time = lingjiang_remaining < drink_remaining ? (lingjiang_remaining < tili_remaining ? lingjiang_remaining : tili_remaining) : (drink_remaining < tili_remaining ? drink_remaining : tili_remaining);
+            //如果有一个时间获取异常，则找到最小的一个非异常时间
+            if (remaining_time == -1) {
+                let array_tmp = [lingjiang_remaining, drink_remaining, tili_remaining];
+                array_tmp.sort(function (a, b) { return a - b });
+                if (array_tmp[1] != -1)
+                    remaining_time = array_tmp[1];
+                else if (array_tmp[2] != -1)
+                    remaining_time = array_tmp[2];
+                else
+                    remaining_time = 1800
+            }
+            _common_Function.toast_console('领奖剩余时间(秒):' + remaining_time);
+            sleep(3000);
+            //按顺序 轮询执行不同任务
+            if (i == 1)
+                app_taolive.kanzhibo('猜你喜欢 赚元宝', remaining_time);
+            else if (i == 2)
+                app_taolive.kanzhibo('看直播，赚元宝', remaining_time);
+            else {
+                i = 0;
+                app_taolive.kanzhibo('看视频，赚元宝', remaining_time);
+            }
+            i++;
+            _common_Function.toast_console("初始时间：" + step_time[step_time_cnt] + "计数：" + step_time_cnt);
+            let _hours = new Date().getHours();
+            if (_hours == 0) {
+                step_time_cnt = 0;
+            }
+            if (_hours >= step_time[step_time_cnt]) {
+                step_time_cnt++;
+                if (step_time_cnt > step_time.length)
+                    step_time_cnt = 0;
+                _common_Function.toast_console("完成一次循环，hours:" + _hours);
+                break;
+            }
+        }
     }
 }
 
-if (start_step <= 2.6) {
-    //转到元宝中心
-    _function.yuanbaozhongxin();
-    //进入睡觉赚元宝
-    app_taolive.sleep_yuanbao.do_task();
-}
-
-if (start_step <= 3) {
-    //转到元宝中心
-    _function.yuanbaozhongxin();
-    sleep(2000);
-    //走路赚元宝
-    app_taolive.duke.zhuanyuanbao();
-}
-
-if (start_step <= 4) {
-    //转到元宝中心
-    _function.yuanbaozhongxin();
-    sleep(2000);
-    //领取步数奖励
-    app_taolive.duke.lingbushu();
-}
-
-if (start_step <= 5) {
-    //转到元宝中心
-    _function.yuanbaozhongxin();
-    sleep(2000);
-    //打工赚元宝
-    app_taolive.duke.zhuanyuanbao(true);
-    exit;
-}
-
-if (start_step <= 6) {
-    //转到元宝中心
-    _function.yuanbaozhongxin();
-    sleep(2000);
-    //长线任务
-    let i = 1;
-    while (true) {
-        sleep(2000);
-        let lingjiang_remaining = _function.get_lingjiang_remaining();
-        sleep(2000);
-        let drink_remaining = _function.get_drink_remaining();
-        sleep(2000);
-        let tili_remaining = _function.get_tili_remaining();
-        //找到最小的等待时间
-        let remaining_time = lingjiang_remaining < drink_remaining ? (lingjiang_remaining < tili_remaining ? lingjiang_remaining : tili_remaining) : (drink_remaining < tili_remaining ? drink_remaining : tili_remaining);
-        //如果有一个时间获取异常，则找到最小的一个非异常时间
-        if (remaining_time == -1) {
-            let array_tmp = [lingjiang_remaining, drink_remaining, tili_remaining];
-            array_tmp.sort(function (a, b) { return a - b });
-            if (array_tmp[1] != -1)
-                remaining_time = array_tmp[1];
-            else if (array_tmp[2] != -1)
-                remaining_time = array_tmp[2];
-            else
-                remaining_time = 1800
-        }
-        _common_Function.toast_console('领奖剩余时间(秒):' + remaining_time);
-        sleep(3000);
-        //按顺序 轮询执行不同任务
-        if (i == 1)
-            app_taolive.kanzhibo('猜你喜欢 赚元宝', remaining_time);
-        else if (i == 2)
-            app_taolive.kanzhibo('看直播，赚元宝', remaining_time);
-        else {
-            i = 0;
-            app_taolive.kanzhibo('看视频，赚元宝', remaining_time);
-        }
-        i++;
-    }
-}
