@@ -32,7 +32,15 @@ var _function = {
         textContains('提现').waitFor();
         _common_Function.toast_console('成功启动app并进入元宝中心');
     },
-
+    /**
+     * 等待间隔
+     */
+    my_sleep: function (n) {
+        if (n && n > 0 && n < 2)
+            sleep(1000 * n);
+        else
+            sleep(1000);
+    },
     /** 
      * 结束应用
     */
@@ -791,6 +799,8 @@ var app_taolive = {
                         _task.click();
                         sleep(1000);
                         _function.view();
+                        sleep(1000);
+                        this.get_prize();
                         sleep(1000);
                         _common_Function.toast_console(title + '列表任务执行' + i + '次');
                         i++;
