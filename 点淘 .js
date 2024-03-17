@@ -251,13 +251,11 @@ var _function = {
      * 查找元宝中心按钮
      */
     find_yuanbaozhongxin_button: function () {
-        if (idContains('gold_common_image').exists()) {
-            _common_Function.click_by_id('gold_common_image');
-            return true;
-        } else {
-            _common_Function.toast_console("gold_common_image 没找到");
-            return false;
-        }
+
+        idContains('gold_common_image').waitFor();
+
+        _common_Function.click_by_id('gold_common_image');
+
     },
 
 
@@ -328,7 +326,7 @@ var _function = {
                     if (element.text() == '领取奖励') {
                         _common_Function.toast_console('领取奖励');
                         element.click();
-                        this.my_sleep(1);
+                        this.my_sleep(3);
                         if (textContains('浏览30秒得至少').exists()) {
                             textContains('浏览30秒得至少').findOne().parent().click();
                             this.my_sleep(2);
@@ -406,6 +404,14 @@ var _function = {
         }
 
         _common_Function.toast_console('领奖剩余时间：' + remaining);
+
+        //关闭弹出的广告
+        if (idContains('tl_dx_card_container').className('android.widget.RelativeLayout').exists()) {
+            let _layout_element = idContains('tl_dx_card_container').className('android.widget.RelativeLayout').findOne(2000);
+            _layout_element.child(0).child(2).click();
+            _function.my_sleep(2);
+        }
+
         if (className('android.view.View').depth(16).indexInParent(1).exists())
             className('android.view.View').depth(16).indexInParent(1).findOne(2000).click();
         else if (className('android.view.View').depth(8).indexInParent(1).exists())
@@ -450,6 +456,38 @@ var _function = {
                 this.my_sleep(2);
             }
         }
+    },
+    /**
+     * 获取打工完成剩余时间
+     */
+    get_work_remaining: function () {
+        this.my_sleep(5);
+        _common_Function.toast_console('获取工鸭领完成打工的剩余时间');
+
+        //可能会报错，异常退出，添加是否在元宝中心的判断
+        _function.yuanbaozhongxin();
+        textContains('打工赚元宝').findOne(3000).click();
+        this.my_sleep(6);
+
+
+        if (className('android.view.View').textContains('打工中').exists() && idContains('action-main').className('android.view.View').exists()) {
+            let _elment = className('android.view.View').textContains('打工中').findOne(2000).parent();
+            let _work_remaining_text = _elment.child(0).text() + _elment.child(1).text() + _elment.child(2).text()
+                + _elment.child(3).text() + _elment.child(4).text() + _elment.child(5).text()
+                + _elment.child(6).text() + _elment.child(7).text();
+            _common_Function.toast_console(_work_remaining_text);
+            let re = /\d{2}:\d{2}:\d{2}/;
+            if (re.exec(_work_remaining_text)) {
+                remaining = _function.str_to_seconds(_work_remaining_text);
+            } else {
+                remaining = -1;
+            }
+        } else
+            remaining = -1;
+
+        _common_Function.toast_console('领取剩余时间：' + remaining);
+        back();
+        return remaining;
     },
     /**
      * 获取打工鸭领取体力的剩余时间（从元宝中心开始）
@@ -655,7 +693,10 @@ var app_taolive = {
                             _function.view_live();
                         _common_Function.toast_console('今日签到 执行:' + task_name + '完成' + i + '次');
                         i++;
-                        sleep(500);
+                        _function.my_sleep(1);
+                        //关闭弹窗
+                        if (className('android.widget.Image').textContains('00001380-2-tps-60-60').exists())
+                            className('android.widget.Image').textContains('00001380-2-tps-60-60').findOne().click();
                     } else {
                         _common_Function.toast_console('今日签到 执行:' + task_name + '已完成');
                         break;
@@ -664,6 +705,7 @@ var app_taolive = {
             } else {
                 _common_Function.toast_console('今日签到"' + task_name + '":任务未找到');
             }
+            //关闭弹窗？
             if (textContains('2-tps-60-60.png_').exists())
                 textContains('2-tps-60-60.png_').findOne().click();
             _function.my_sleep(2);
@@ -1709,16 +1751,22 @@ while (true) {
             let drink_remaining = _function.get_drink_remaining();
             _function.my_sleep(2);
             let tili_remaining = _function.get_tili_remaining();
+            _function.my_sleep(2);
+            let work_remaining = _function.get_work_remaining();
             //找到最小的等待时间
             let remaining_time = lingjiang_remaining < drink_remaining ? (lingjiang_remaining < tili_remaining ? lingjiang_remaining : tili_remaining) : (drink_remaining < tili_remaining ? drink_remaining : tili_remaining);
+            if (work_remaining < remaining_time)
+                remaining_time = work_remaining;
             //如果有一个时间获取异常，则找到最小的一个非异常时间
             if (remaining_time == -1) {
-                let array_tmp = [lingjiang_remaining, drink_remaining, tili_remaining];
+                let array_tmp = [lingjiang_remaining, drink_remaining, tili_remaining, work_remaining];
                 array_tmp.sort(function (a, b) { return a - b });
                 if (array_tmp[1] != -1)
                     remaining_time = array_tmp[1];
                 else if (array_tmp[2] != -1)
                     remaining_time = array_tmp[2];
+                else if (array_tmp[3] != -1)
+                    remaining_time = array_tmp[3];
                 else
                     remaining_time = 1200
             }
