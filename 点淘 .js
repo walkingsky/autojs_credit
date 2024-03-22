@@ -9,7 +9,6 @@ var _common_Function = require('./自动脚本/common.js');
 
 var thread_egg = null;
 
-
 ////------------通用函数----------------
 
 var _function = {
@@ -20,14 +19,27 @@ var _function = {
     start: function () {
         //let result = shell('am start com.taobao.live/com.taobao.live.home.activity.TaoLiveHomeActivity');
         app.launch('com.taobao.live');
+        sleep(2000);
+        while (id('tl_home_capture_video_btn').findOne(2000) == null)
+            if (textContains('请按照说明进行验证').className('android.view.View').exists()) {
+                let i = 1;
+                while (textContains('请按照说明进行验证').className('android.view.View').exists() && i < 25) {
+                    this.vibrate(1);
+                    sleep(3000);
+                }
+            }
+
+        _common_Function.toast_console('等待“tl_home_capture_video_btn”按钮');
         //阻断式等待
-        id('tl_home_capture_video_btn').waitFor();
+        id('tl_home_capture_video_btn').findOne(2000);
+
         sleep(500);
         //每天第一次进入app ，有个青少年模式提示，点击任意地方会关闭这个弹层提示
         if (textContains('青少年守护模式').exists())
             _common_Function.click_by_id('tv_teenager_close');
 
         this.find_yuanbaozhongxin_button();
+        _common_Function.toast_console('等待“提现”按钮');
         //阻断式等待
         textContains('提现').waitFor();
         _common_Function.toast_console('成功启动app并进入元宝中心');
@@ -200,6 +212,7 @@ var _function = {
 
         if (live) {
             var i = 0;
+            var first_check = 0;
             while (live_title != '') {
                 //this.op_refuse();
                 //关闭弹窗
@@ -211,16 +224,30 @@ var _function = {
                     if (id('gold_action_text').findOne().text() == '点击翻倍' || id('gold_action_text').findOne().text() == '点击 x4 倍')
                         _common_Function.click_by_id('gold_action_layout');
 
-                if (!textContains(live_title).exists())
-                    break;
+                if (!textContains(live_title).exists()) {
+                    if (textContains('请按照说明进行验证').className('android.view.View').exists()) {
+                        //this.my_sleep(1);
+                        _function.vibrate(1);
+                        first_check++;
+                        if (first_check < 1)
+                            back();
+                    }
+                    else
+                        break;
+                }
+
                 if (live_title != '后完成') //先划一次屏
                     swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 400);
                 this.my_sleep(2);
                 i++;
                 //定时划屏
                 if (i % 5 == 0) {
-                    swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 400);
-                    this.my_sleep(2);
+                    if (textContains('请按照说明进行验证').className('android.view.View').exists()) {
+                        _function.vibrate(1);
+                    } else {
+                        swipe(device.width / 2, device.height * 0.9, device.width / 2, device.height * 0.1, 400);
+                        this.my_sleep(2);
+                    }
                 }
             }
             //返回
@@ -619,6 +646,37 @@ var _function = {
             _common_Function.toast_console('view_web 返回错误:' + error);
         }
 
+    },
+    /**
+     * 播放音乐
+     * @param {int} kind  类型
+     */
+    play_music: function (kind) {
+        var MediaPlayer = android.media.MediaPlayer;
+        var player = new MediaPlayer();
+        switch (kind) {
+            case 1:
+                player.setDataSource("file:///sdcard/music.mp3");
+                break;
+            case 2:
+                player.setDataSource("file:///sdcard/music.mp3");
+                break;
+            default:
+                player.setDataSource("file:///sdcard/music.mp3");
+                break;
+        }
+        player.prepare();
+        player.start();
+    },
+    /**
+     * 震动手机
+     * @param {int} second  震动的秒数，整数
+     */
+    vibrate: function (second) {
+        //var vibrator = context.getSystemService(Context.VIBRATOR_SERVICE);
+        //vibrator.vibrate(1000 * second);
+        device.vibrate(1000 * second);
+        _common_Function.toast_console('震动一次');
     }
 }
 

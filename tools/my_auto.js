@@ -57,10 +57,11 @@ if (textContains('今日不再出现').exists()) {
 }
 
 try {
-    //text('我的').depth(20).findOne(2000).click();
-    //descContains('点击').indexInParent(3).findOne(2000).click();
+    let a = descContains('我的').className('android.view.ViewGroup').indexInParent(4).findOne(2000);
+    _common_Function.btn_position_click(a);
+    sleep(1000);
     _common_Function.click_by_text('签到');
-    sleep(500);
+    sleep(1500);
     if (className('android.widget.TextView').depth(14).indexInParent(2).exists()) {
         className('android.widget.TextView').depth(14).indexInParent(2).findOne().click();
     }
@@ -71,7 +72,6 @@ try {
     _common_Function.toast_console('网上国网签到错误:' + error);
 }
 _common_Function.toast_console('网上国网：签到完成');
-
 
 //易充电
 _common_Function.toast_console('易充电：开始签到');
