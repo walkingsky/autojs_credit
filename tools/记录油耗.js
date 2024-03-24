@@ -38,11 +38,64 @@ var _functions = {
         sleep(500);
         back();
         return { "energy": energy, "oil": oil, "total_maile": total_maile };
+    },
+    set_xiaoxiong_record: function (data) {
+        app.launch("com.firebear.androil");
+        sleep(5000);
+        //className("android.widget.TextView").textContains("综合能耗").waitFor();
+        if (className("android.widget.LinearLayout").idContains("oilListLay").indexInParent(3).exists()) {
+            className("android.widget.LinearLayout").idContains("oilListLay").indexInParent(3).findOne().click();
+            id("addBtn").className("android.widget.ImageView").waitFor();
+            id("addBtn").className("android.widget.ImageView").indexInParent(1).findOne().click();
+            sleep(500);
+            if (data.kind == 'oil') {
+                id("fuelCB").textContains("加油").className("android.widget.RadioButton").findOne().click();
+                id("lichengTxv").className("android.widget.EditText").findOne().setText(data.after_total_maile.toString());
+                id("sum_price_txv").className("android.widget.EditText").findOne().setText(data.oil_cost_1.toString());
+                id("liter_txv").className("android.widget.EditText").findOne().setText(data.oil_value.toString());
+                id("real_price_txv").className("android.widget.EditText").findOne().setText(data.oil_cost_2.toString());
+                let percet = id("percentTxv").className("android.widget.EditText").find();
+                if (percet.length == 3) {
+                    percet[0].setText(data.before_oil.toString());
+                    percet[1].setText(data.after_oil.toString());
+                    percet[2].setText(data.after_energy.toString());
+                }
+
+
+            } else {
+                id("lichengTxv").className("android.widget.EditText").findOne().setText(data.after_total_maile.toString());
+
+                id("sumPriceTxv").className("android.widget.EditText").findOne().setText(data.charge_cost.toString());
+                id("literTxv").className("android.widget.EditText").findOne().setText(data.charge_value.toString());
+
+                let percet = id("percentTxv").className("android.widget.EditText").find();
+                if (percet.length == 3) {
+                    percet[0].setText(data.before_energy.toString());
+                    percet[1].setText(data.after_energy.toString());
+                    percet[2].setText(data.after_oil.toString());
+                }
+            }
+            textContains("添加").idContains("saveBtn").findOne().click();
+        }
+
     }
+
 }
 
+//测试代码
 //_functions.get_BYD_record();
-//exit();
+/*
+_functions.set_xiaoxiong_record({
+    "kind": "oil", "before_energy": 1, "before_oil": 2, "before_total_maile": 3,
+    "after_oil": 4, "after_energy": 5, "after_total_maile": 8000, "oil_cost_1": 200, "oil_cost_2": 195, "oil_value": 25
+});
+
+_functions.set_xiaoxiong_record({
+    "kind": "energy", "before_energy": 1, "before_oil": 2, "before_total_maile": 3,
+    "after_oil": 4, "after_energy": 50, "after_total_maile": 8100, "charge_cost": 10, "charge_value": 10
+});
+exit();
+*/
 
 ui.layout(
 
@@ -133,7 +186,7 @@ ui.layout(
                     <button layout_gravity="center" w="auto" id="get_data_after" text="获取后数据" />
                 </horizontal>
                 <horizontal >
-                    <button layout_gravity="center" w="auto" id="clear_cache" text="清除缓存" />
+
                 </horizontal>
                 <horizontal >
                     <button layout_gravity="center" w="auto" id="record_data" text="记录数据" />
@@ -142,8 +195,10 @@ ui.layout(
             <text h="50dp" id="log" textColor="red" gravity="center"></text>
         </vertical>
 
-        <horizontal w="*" gravity="right|bottom" >
-            <button id="btn_exit" text="退出" />
+        <horizontal gravity="bottom" >
+            <button layout_gravity="left" w="auto" id="clear_cache" text="清除缓存" />
+            <text w="200dp"></text>
+            <button layout_gravity="right" id="btn_exit" text="退出" />
         </horizontal>
     </vertical >
 
@@ -271,8 +326,8 @@ ui.get_data_after.click(function () {
             let temp = storage.get("before");
             console.log(temp);
             //测试用修改该判断条件
-            if (temp.total_maile < result.total_maile && (temp.energy > result.energy || temp.oil > result.oil)) {
-                //if ((temp.energy >= result.energy || temp.oil > result.oil)) {
+            //if (temp.total_maile < result.total_maile && (temp.energy > result.energy || temp.oil > result.oil)) {
+            if ((temp.energy >= result.energy || temp.oil > result.oil)) {
                 ui.run(() => {
                     ui.after_total_maile.setText(result.total_maile.toString() + "公里 ");
                     ui.after_energy.setText(result.energy.toString() + "% ");
@@ -284,7 +339,7 @@ ui.get_data_after.click(function () {
                 ui.record_data.setEnabled(true);
 
                 ui.cost.setVisibility(View.VISIBLE);
-                if (temp.oil > result.oil) {
+                if (temp.oil >= result.oil) {
                     storage.put("kind", "oil");
                     ui.radio_oil.setChecked(true);
                 } else {
@@ -450,6 +505,16 @@ ui.record_data.on("click", () => {
     storage.remove("before");
     storage.remove("after");
     init_ui();
+    ui.log.setText(str_1);
+
+    threads.start(function () {
+        let data = {
+            "kind": kind, "before_energy": before_energy, "before_oil": before_oil, "before_total_maile": before_total_maile,
+            "after_oil": after_oil, "after_energy": after_energy, "after_total_maile": after_total_maile, "oil_cost_1": oil_cost_1,
+            "oil_cost_2": oil_cost_2, "oil_value": oil_value, "charge_cost": charge_cost, "charge_value": charge_value
+        };
+        _functions.set_xiaoxiong_record(data);
+    });
 
 });
 
