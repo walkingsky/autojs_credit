@@ -64,14 +64,27 @@ var _function = {
     stop: function () {
         _common_Function.toast_console('关闭应用');
         app.openAppSetting('com.taobao.live');
-        sleep(500);
-        textContains('强行停止').waitFor();
-        textContains('强行停止').click();
-        sleep(500);
-        textContains('确定').waitFor();
-        textContains('确定').click();
-        this.my_sleep(1);
-        back();
+        if (device.brand == 'Redmi') {
+            sleep(500);
+            textContains('结束运行').waitFor();
+            textContains('强行停止').findOne(500).parent().click();
+            sleep(500);
+            textContains('确定').waitFor();
+            textContains('确定').findOne(1000).click();
+            this.my_sleep(1);
+            back();
+        } else {
+            sleep(500);
+            textContains('强行停止').waitFor();
+            textContains('强行停止').click();
+            sleep(500);
+            textContains('确定').waitFor();
+            textContains('确定').click();
+            this.my_sleep(1);
+            back();
+        }
+
+
         _common_Function.toast_console('成功关闭应用');
     },
 
@@ -830,6 +843,10 @@ var app_taolive = {
                 _function.my_sleep(2);
                 //返回 退出
                 back();
+                if (device.brand == 'Redmi') {
+                    sleep(500);
+                    back();
+                }
 
                 _common_Function.toast_console('今日签到:任务完成');
             } else {
@@ -1756,6 +1773,7 @@ while (true) {
     }
 
     if (start_step <= 2.5) {
+        _function.my_sleep(3);
         //转到元宝中心
         _function.yuanbaozhongxin();
         //赚钱卡
@@ -1765,6 +1783,7 @@ while (true) {
     }
 
     if (start_step <= 2.6) {
+        _function.my_sleep(3);
         //转到元宝中心
         _function.yuanbaozhongxin();
         //进入睡觉赚元宝
@@ -1772,6 +1791,7 @@ while (true) {
     }
 
     if (start_step <= 3) {
+        _function.my_sleep(3);
         //转到元宝中心
         _function.yuanbaozhongxin();
         _function.my_sleep(2);
@@ -1780,6 +1800,7 @@ while (true) {
     }
 
     if (start_step <= 4) {
+        _function.my_sleep(3);
         //转到元宝中心
         _function.yuanbaozhongxin();
         _function.my_sleep(2);
@@ -1788,15 +1809,16 @@ while (true) {
     }
 
     if (start_step <= 5) {
+        _function.my_sleep(3);
         //转到元宝中心
         _function.yuanbaozhongxin();
         _function.my_sleep(2);
         //打工赚元宝
         app_taolive.duke.zhuanyuanbao(true);
-        exit;
     }
 
     if (start_step <= 6) {
+        _function.my_sleep(3);
         //转到元宝中心
         _function.yuanbaozhongxin();
         _function.my_sleep(2);

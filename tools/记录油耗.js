@@ -236,16 +236,17 @@ init_ui = function () {
             ui.after_energy.setText("");
             ui.after_oil.setText("");
         };
-
-        if (storage.contains("before"))
+        //先不禁用“获取前数据”按钮，这样更方便修改
+        /*if (storage.contains("before"))
             ui.get_data_before.setEnabled(false);
-        else if (storage.contains("before") && !storage.contains("after")) {
+            
+        else */if (storage.contains("before") && !storage.contains("after")) {
             ui.record_data.setEnabled(false);
             ui.get_data_after.setEnabled(true);
         }
         else if (storage.contains("after") && storage.contains("before")) {
             ui.record_data.setEnabled(true);
-            ui.get_data_after.setEnabled(false);
+            //ui.get_data_after.setEnabled(false);
         }
         else if (!storage.contains("before")) {
             ui.get_data_before.setEnabled(true);
@@ -326,8 +327,8 @@ ui.get_data_after.click(function () {
             let temp = storage.get("before");
             console.log(temp);
             //测试用修改该判断条件
-            //if (temp.total_maile < result.total_maile && (temp.energy > result.energy || temp.oil > result.oil)) {
-            if ((temp.energy >= result.energy || temp.oil > result.oil)) {
+            if (temp.total_maile <= result.total_maile && (temp.energy <= result.energy || temp.oil <= result.oil)) {
+                //if ((temp.energy >= result.energy || temp.oil > result.oil)) {
                 ui.run(() => {
                     ui.after_total_maile.setText(result.total_maile.toString() + "公里 ");
                     ui.after_energy.setText(result.energy.toString() + "% ");
@@ -339,7 +340,7 @@ ui.get_data_after.click(function () {
                 ui.record_data.setEnabled(true);
 
                 ui.cost.setVisibility(View.VISIBLE);
-                if (temp.oil >= result.oil) {
+                if (temp.oil < result.oil || temp.energy >= result.energy) {
                     storage.put("kind", "oil");
                     ui.radio_oil.setChecked(true);
                 } else {
@@ -501,9 +502,10 @@ ui.record_data.on("click", () => {
 
     files.append("./recorder.txt", str, encoding = "utf-8");
 
-    storage.remove("kind");
-    storage.remove("before");
-    storage.remove("after");
+    //暂时先不自动清空缓存
+    //storage.remove("kind");
+    //storage.remove("before");
+    //storage.remove("after");
     init_ui();
     ui.log.setText(str_1);
 

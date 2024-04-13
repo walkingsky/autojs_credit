@@ -12,7 +12,7 @@ app.launch('com.firebear.androil');
 sleep(1000);
 
 // 是否是新建文件，否的话则追加记录到已有文件后
-var new_file = false;
+var new_file = true;
 // 文件名
 var file_name = './能耗记录.csv';
 
