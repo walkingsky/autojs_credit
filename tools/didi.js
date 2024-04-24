@@ -305,7 +305,7 @@ var functions = {
                             var x2 = order_items.bounds().right;
                             var y1 = order_items.bounds().top;
                             var y2 = order_items.bounds().bottom;
-                            /*
+                            /*  //测试标记线框的颜色都是白色框，不能标记成设定的颜色值，不知道是手机兼容性还是autojs的bug，暂时先关闭该功能
                             ui.run(() => {
                                 let w2 = floaty.rawWindow(
                                     <vertical id="root" bg="#ff0000" gravity="center" w="*" h="*">
