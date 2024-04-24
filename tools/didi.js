@@ -1,5 +1,5 @@
 /**
- * 网约车（滴滴出行、哈啰、嘀嗒车主）刷单软件
+ * 网约车（滴滴出行）刷单软件 ；嘀嗒H5不能捕获，所以用不来该应用；哈啰还未开发
  * author: walkingsky
  * url:https://github.com/walkingsky/autojs_credit
  */
