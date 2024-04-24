@@ -22,8 +22,13 @@ var distance_from, distance, shunlu, distance_to;
 var exclusive, paid, multiple_passenger, share_expenses;
 // 读取订单数量后刷新，刷新间隔
 var order_cnt = 30, refresh_interval = 1;
+//存储匹配到的订单
+var matched_order_list = [];
+//刷到订单后是否要停止
+var should_stop = true;
 
 var current_app_name = currentPackage();
+
 
 var functions = {
     init_data: function () {
@@ -76,13 +81,11 @@ var functions = {
             m2 = m2 - 60 * parseInt(m2 / 60);
         }
         //h1:m1 最早时间，h2:m2 最晚时间 
-
         let arry = /(\d\d):(\d\d)-(\d\d):(\d\d)/g.exec(time_str);
-        //console.log(arry);
-        console.log(h1 + ":" + m1 + "-" + h2 + ":" + m2);
+        //console.log(h1 + ":" + m1 + "-" + h2 + ":" + m2);
         //console.log((Number(arry[1]) + Number(arry[2]) / 100) + "-" + (h2 + m2 / 100) + "-" + (Number(arry[3]) + Number(arry[4]) / 100) + "-" + (h1 + m1 / 100));
         if (arry) {
-            console.log((Number(arry[1]) + Number(arry[2]) / 100) + "-" + (h2 + m2 / 100) + "-" + (Number(arry[3]) + Number(arry[4]) / 100) + "-" + (h1 + m1 / 100));
+            //console.log((Number(arry[1]) + Number(arry[2]) / 100) + "-" + (h2 + m2 / 100) + "-" + (Number(arry[3]) + Number(arry[4]) / 100) + "-" + (h1 + m1 / 100));
             if ((Number(arry[1]) + Number(arry[2]) / 100) <= (h2 + m2 / 100) || (Number(arry[3]) + Number(arry[4]) / 100) >= (h1 + m1 / 100)) {
                 console.log("时间在范围内");
                 return true;
@@ -109,10 +112,14 @@ var functions = {
     滴滴刷单: function () {
         threads.start(function () {
             app.launch("com.sdu.didi.psnger");
-            idContains('normal_icon').waitFor();
+            //idContains('normal_icon').waitFor();
+            className("android.widget.TextView").textContains("车主").waitFor();
             if (className("android.widget.RelativeLayout").idContains("main_rl").exists())
                 descContains("关闭弹窗").idContains("close_dialog").findOne().click();
-            className("android.widget.TextView").textContains("车主").findOne(2000).parent().parent().click();
+            if (className("android.widget.TextView").textContains("车主").findOne(2000).parent().clickable())
+                className("android.widget.TextView").textContains("车主").findOne(2000).parent().click();
+            else
+                className("android.widget.TextView").textContains("车主").findOne(2000).parent().parent().click();
             sleep(2000);
             if (descContains("关闭弹窗").idContains("popClose").exists())
                 descContains("关闭弹窗").idContains("popClose").findOne(1000).click();
@@ -130,7 +137,6 @@ var functions = {
             let list = [];
             while (i < order_cnt + 1) {
                 sleep(500);
-                console.log(i);
                 if (i >= order_cnt) {//30个订单
                     //等待1分钟
                     sleep(60000 * refresh_interval);
@@ -158,7 +164,6 @@ var functions = {
                 let order_items_arry = idContains("sfc_wait_list_item_layout").className("android.view.ViewGroup").find();
                 for (let cnt = 0; cnt < order_items_arry.size(); cnt++) {
                     order_items = order_items_arry.get(cnt);
-
                     //判断是否已经查找过该记录
                     let a = order_items.findOne(idContains("order_card_time_title").className("android.widget.TextView"));
                     let b = order_items.findOne(idContains("from_tv").className("android.widget.TextView"));
@@ -200,7 +205,7 @@ var functions = {
                             console.log("起点距离不在范围内" + _from_str + "-" + distance_from);
                             continue;
                         }
-                        console.log("_from_str" + parseFloat(_from_str));
+                        //console.log("_from_str" + parseFloat(_from_str));
                     } else {
                         continue;
                     }
@@ -213,7 +218,7 @@ var functions = {
                                 console.log("终点距离不在范围内" + _to_str + "-" + _to_str);
                                 continue;
                             }
-                            console.log("_to_str" + parseFloat(_to_str));
+                            //console.log("_to_str" + parseFloat(_to_str));
                         } else {
                             continue;
                         }
@@ -248,23 +253,91 @@ var functions = {
                     } else {
                         console.log("tips_content没找到");
                     }
-
-                    //判断是否已支付
-                    if (paid) {
-                        let cost = order_items.findOne(idContains("sfc_order_price_content").className("android.widget.TextView"))
-                        if (cost) {
+                    //判断是否已支付                    
+                    let cost = order_items.findOne(idContains("sfc_order_price_content").className("android.widget.TextView"));
+                    if (cost) {
+                        if (paid) {
                             let cost_str = cost.text();
                             if (!cost_str.includes("已支付"))
                                 continue;
                         }
                     }
 
-                    //到了最后就是刷到了合适的订单
-                    for (let j = 0; j < 15; j++) {
-                        device.vibrate(500);
-                        sleep(5000);
+                    let is_in_list = false;
+                    let is_in_list_enable = false;
+                    for (let v in matched_order_list) {
+                        if (matched_order_list[v].list_contens == temp) {
+                            is_in_list = true;
+                            if (matched_order_list[v].list_enable)
+                                is_in_list_enable = true;
+                            break;
+                        }
                     }
-                    break;
+
+                    if (!is_in_list || is_in_list_enable) {
+                        if (!is_in_list) {//加入列表
+                            matched_order_list.push({
+                                list_time: a.text(),
+                                list_price: cost.text(),
+                                list_from: b.text(),
+                                list_to: c.text(),
+                                list_msg: tips_content.text(),
+                                list_enable: true,
+                                list_contens: temp
+                            });
+                            ui.run(() => {
+                                ui.list.setDataSource(matched_order_list);
+                            });
+                        }
+                        //到了最后就是刷到了合适的订单
+                        for (let j = 0; j < 15; j++) {
+                            device.vibrate(500);
+                            sleep(3000);
+                        }
+                        //停止刷新并提醒
+                        if (should_stop) {
+                            if (order_items.bounds().top > 2000) {
+                                swipe(device.width / 2, device.height * 0.8, device.width / 2, device.height * 0.6, 1000);
+                                sleep(100);
+                                order_items = idContains("from_tv").textContains(a.text).findOne(1000).parent();
+                            }
+                            var x1 = order_items.bounds().left;
+                            var x2 = order_items.bounds().right;
+                            var y1 = order_items.bounds().top;
+                            var y2 = order_items.bounds().bottom;
+                            /*
+                            ui.run(() => {
+                                let w2 = floaty.rawWindow(
+                                    <vertical id="root" bg="#ff0000" gravity="center" w="*" h="*">
+                                        <canvas id="board" w="*" h="*"></canvas>
+                                    </vertical>
+                                );
+                                w2.setSize(-1, -1);
+                                w2.setPosition(0, 0);
+                                w2.board.on("draw", (canvas) => {
+                                    //canvas.drawColor(colors.parseColor("#0000ff"));
+                                    var paint = new Paint();
+                                    //设置画笔为填充，则绘制出来的图形都是实心的
+                                    paint.setStyle(Paint.Style.FILL);
+                                    paint.setStrokeWidth(6);
+                                    //设置画笔颜色为红色
+                                    paint.setColor(colors.RED);
+                                    //paint.setColor(colors.parseColor("#ff0000"));
+                                    //绘制一个从坐标(0, 0)到坐标(100, 100)的正方形
+                                    canvas.drawRect(x1, y1, x2, y2, paint);
+                                    //canvas.drawColor(colors.parseColor("#0000ff"));
+                                });
+
+                                //w2.setAdjustEnabled(false);
+                                w2.root.on("click", () => {
+                                    w2.close();
+                                });
+                            });
+                            */
+                            return;
+                        }
+                        console.log(temp);
+                    }
                 }
                 swipe(device.width / 2, device.height * 0.8 - 50, device.width / 2, device.height * 0.3, 1000);
             }
@@ -335,11 +408,26 @@ ui.layout(
                 <seekbar w="200" id="refresh_interval_seek_bar" layout_gravity="center" bg='#00eeee' step="20" />
             </horizontal>
         </vertical>
-
-        <horizontal margin="5" w="*">
-            <button id="btn_start" text="开始刷单" />
-        </horizontal>
+        <card w="*" margin="2 0 2 0" h="420">
+            <list id="list">
+                <card w="*" h="auto" margin="5 5" cardCornerRadius="2dp"
+                    cardElevation="1dp" gravity="center_vertical">
+                    <vertical padding="15 5" h="auto">
+                        <horizontal w="*">
+                            <text text="{{list_time}}" textColor="#222222" padding="28 0" textSize="16sp" gravity="left" />
+                            <text text="{{list_price}}" textColor="#f44336" padding="28 0" textSize="16sp" gravity="right" />
+                        </horizontal>
+                        <text text="从：{{list_from}}" textColor="#4caf50" textSize="14sp" w="*" />
+                        <text text="到：{{list_to}}" textColor="#2196f3" textSize="14sp" w="*" />
+                        <text text="{{list_msg}}" textColor="#222222" textSize="14sp" />
+                    </vertical>
+                    <View bg="{{list_enable?'#4caf50':'#f44336'}}" h="*" w="10" id="list_status" />
+                </card>
+            </list>
+        </card>
         <horizontal gravity="bottom" w="*" margin="10">
+            <checkbox text="刷到后停止" id="should_stop" checked="{{should_stop}}" />
+            <button id="btn_start" text="开始刷单" />
             <button layout_gravity="right" id="btn_exit" text="退出" />
         </horizontal>
     </vertical >
@@ -551,6 +639,43 @@ ui.share_expenses.on("check", (checked) => {
     share_expenses = checked;
     storage.put("share_expenses", share_expenses);
 });
+ui.should_stop.on("check", (checked) => {
+    should_stop = checked;
+});
+
+ui.list.on("item_click", function (item, i, itemView, listView) {
+    if (itemView.list_status.attr("bg") == "#4caf50") {//绿色转红色，代表标记该记录要被过滤
+
+        confirm("忽略该订单", "该记录订单不会再被提醒", function (ok) {
+            if (ok) {
+                itemView.list_status.attr("bg", "#f44336");
+                matched_order_list[i].list_enable = false;
+            }
+        });
+        //toast("该记录订单不会在被提醒");
+    } else {
+
+        confirm("不再忽略该订单", "该记录订单会再被提醒", function (ok) {
+            if (ok) {
+                itemView.list_status.attr("bg", "#4caf50"); //红色转绿色，代表该记录不被过滤
+                matched_order_list[i].list_enable = true;
+            }
+        });
+    }
+});
+
+ui.list.on("item_long_click", function (e, item, i, itemView, listView) {
+    //ui.list.setDataSource(matched_order_list);
+    confirm("确定要清除该订单吗？", "确定后该订单会被清除出列表", function (clear) {
+        if (clear) {
+            //items.splice(i, 1);
+            //ui.list.setDataSource(items);
+            matched_order_list.splice(i, 1);
+            ui.list.setDataSource(matched_order_list);
+        }
+    });
+    e.consumed = true;
+});
 
 var window = floaty.window(
     <vertical>
@@ -564,6 +689,7 @@ window.stop_threads.on("click", () => {
 window.stop_threads.on("long_click", () => {
     window.setAdjustEnabled(!window.isAdjustEnabled());
 });
+window.setPosition(770, 2095);
 
 ui.btn_exit.click(function () {
     threads.shutDownAll();
@@ -576,4 +702,23 @@ ui.btn_exit.click(function () {
 
 functions.init_data();
 init_ui();
+
+
+var items = [{
+    list_time: "今天22:30-22:45",
+    list_price: "已支付29.17元",
+    list_from: "华联商厦(上地店)-东一门",
+    list_to: "西山奥园-东门",
+    list_msg: "1人愿拼~订单里程19.0km",
+    list_enable: true
+}, {
+    list_time: "今天22:30-22:45",
+    list_price: "已支付29.17元",
+    list_from: "东方美颜美发美甲沙龙三两地分居三定了放假斯蒂芬斯蒂芬记录记录斯蒂芬",
+    list_to: "广安门内-地铁站",
+    list_msg: "3人独享~订单里程24.2km",
+    list_enable: false
+}
+];
+//ui.list.setDataSource(items);
 
