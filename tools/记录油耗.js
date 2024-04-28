@@ -257,10 +257,14 @@ init_ui = function () {
 
         if (storage.contains("before") && storage.contains("after")) {
             ui.cost.setVisibility(View.VISIBLE);
-            if (storage.get("kind") == "oil")
-                ui.radio_oil.setChecked(true);
-            else
+            if (storage.get("kind") == "oil") {
                 ui.radio_energy.setChecked(false);
+                ui.radio_oil.setChecked(true);
+            }
+            else {
+                ui.radio_oil.setChecked(false);
+                ui.radio_energy.setChecked(true);
+            }
             charging_or_refuel();
             //ui.record_data.setEnabled(true);
         } else {
