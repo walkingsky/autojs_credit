@@ -107,25 +107,25 @@ ui.layout(
                 </horizontal>
                 <horizontal gravity="center_horizontal" h="50dp">
                     <text w="auto" text="总公里数：" />
-                    <text w="auto" id="before_total_maile" textSize="18sp" textColor="blue" text="" />
+                    <input w="auto" id="before_total_maile" textSize="18sp" textColor="blue" text="" />
                     <text w="auto" text="剩余电量：" />
-                    <text w="auto" id="before_energy" textSize="18sp" textColor="blue" text=""></text>
+                    <input w="auto" id="before_energy" textSize="18sp" textColor="blue" text="" />
                     <text w="auto" text="剩余油量：" />
-                    <text w="auto" id="before_oil" textSize="18sp" textColor="blue" text=""></text>
+                    <input w="auto" id="before_oil" textSize="18sp" textColor="blue" text="" />
                 </horizontal>
                 <horizontal h="100dp" w="*" gravity="center">
                     <text w="auto" textSize="20sp" text=" 加油充电之后   " layout_gravity="center" />
                 </horizontal>
                 <horizontal gravity="center_horizontal" h="50dp">
                     <text w="auto" text="总公里数：" />
-                    <text w="auto" id="after_total_maile" textSize="18sp" textColor="blue" text="" />
+                    <input w="auto" id="after_total_maile" textSize="18sp" textColor="blue" text="" />
                     <text w="auto" text="剩余电量：" />
-                    <text w="auto" id="after_energy" textSize="18sp" textColor="blue" text=""></text>
+                    <input w="auto" id="after_energy" textSize="18sp" textColor="blue" text="" />
                     <text w="auto" text="剩余油量：" />
-                    <text w="auto" id="after_oil" textSize="18sp" textColor="blue" text=""></text>
+                    <input w="auto" id="after_oil" textSize="18sp" textColor="blue" text="" />
                 </horizontal>
             </vertical>
-        </frame>
+        </frame >
         <vertical h="400dp" >
             <vertical h="300dp" id="cost" >
                 <horizontal h="50dp" gravity="">
