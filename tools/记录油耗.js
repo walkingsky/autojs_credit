@@ -43,8 +43,8 @@ var _functions = {
         app.launch("com.firebear.androil");
         sleep(5000);
         //className("android.widget.TextView").textContains("综合能耗").waitFor();
-        if (className("android.widget.LinearLayout").idContains("oilListLay").indexInParent(3).exists()) {
-            className("android.widget.LinearLayout").idContains("oilListLay").indexInParent(3).findOne().click();
+        if (className("android.widget.LinearLayout").idContains("oilListLay").indexInParent(5).exists()) {
+            className("android.widget.LinearLayout").idContains("oilListLay").indexInParent(5).findOne().click();
             id("addBtn").className("android.widget.ImageView").waitFor();
             id("addBtn").className("android.widget.ImageView").indexInParent(1).findOne().click();
             sleep(500);
@@ -450,6 +450,39 @@ ui.record_data.on("click", () => {
     let after_energy = _after.energy;
     let after_oil = _after.oil;
     let kind = storage.get("kind");
+
+    //获取输入框中当前的值
+    let now_before_total_maile = Number(ui.before_total_maile.getText().replace("公里", ""));
+    let now_before_energy = Number(ui.before_energy.getText().replace("%", ""));
+    let now_before_oil = Number(ui.before_oil.getText().replace("%", ""));
+    let now_after_total_maile = Number(ui.after_total_maile.getText().replace("公里", ""));
+    let now_after_energy = Number(ui.after_energy.getText().replace("%", ""));
+    let now_after_oil = Number(ui.after_oil.getText().replace("%", ""));
+
+    //如果不一致，重新保存新值到缓存中
+    if (now_before_total_maile != before_total_maile ||
+        before_energy != now_before_energy ||
+        before_oil != now_before_oil) {
+        before_total_maile = now_before_total_maile;
+        before_energy = now_before_energy;
+        before_oil = now_before_oil
+        _before.total_maile = now_before_total_maile;
+        _before.energy = now_before_energy;
+        _before.oil = now_before_oil;
+        storage.put("before", _before);
+    }
+
+    if (after_total_maile != now_after_total_maile ||
+        after_energy != now_after_energy ||
+        after_oil != now_after_oil) {
+        after_total_maile = now_after_total_maile;
+        after_energy = now_after_energy;
+        after_oil = now_after_oil
+        _after.total_maile = now_after_total_maile;
+        _after.energy = now_after_energy;
+        _after.oil = now_after_oil;
+        storage.put("after", _after);
+    }
 
     let charge_cost = 0;
     let charge_value = 0;
