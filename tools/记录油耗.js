@@ -42,7 +42,7 @@ var _functions = {
     set_xiaoxiong_record: function (data) {
         app.launch("com.firebear.androil");
         sleep(5000);
-        //className("android.widget.TextView").textContains("综合能耗").waitFor();
+        id("carNameTxv").textContains("驱逐舰").waitFor();
         if (className("android.widget.LinearLayout").idContains("oilListLay").indexInParent(5).exists()) {
             className("android.widget.LinearLayout").idContains("oilListLay").indexInParent(5).findOne().click();
             id("addBtn").className("android.widget.ImageView").waitFor();
@@ -452,12 +452,13 @@ ui.record_data.on("click", () => {
     let kind = storage.get("kind");
 
     //获取输入框中当前的值
-    let now_before_total_maile = Number(ui.before_total_maile.getText().replace("公里", ""));
-    let now_before_energy = Number(ui.before_energy.getText().replace("%", ""));
-    let now_before_oil = Number(ui.before_oil.getText().replace("%", ""));
-    let now_after_total_maile = Number(ui.after_total_maile.getText().replace("公里", ""));
-    let now_after_energy = Number(ui.after_energy.getText().replace("%", ""));
-    let now_after_oil = Number(ui.after_oil.getText().replace("%", ""));
+
+    let now_before_total_maile = Number(String(ui.before_total_maile.getText()).replace("公里", ""));
+    let now_before_energy = Number(String(ui.before_energy.getText()).replace("%", ""));
+    let now_before_oil = Number(String(ui.before_oil.getText()).replace("%", ""));
+    let now_after_total_maile = Number(String(ui.after_total_maile.getText()).replace("公里", ""));
+    let now_after_energy = Number(String(ui.after_energy.getText()).replace("%", ""));
+    let now_after_oil = Number(String(ui.after_oil.getText()).replace("%", ""));
 
     //如果不一致，重新保存新值到缓存中
     if (now_before_total_maile != before_total_maile ||
