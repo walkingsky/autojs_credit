@@ -7,27 +7,62 @@
 auto.waitFor();
 var use_while = true;
 
-function hejiaqinApp(turn_on) {
-    //if (!device.isScreenOn())
-    //    device.wakeUp();
-    device.wakeUpIfNeeded();
+function wake_up_screen() {
+    console.log('[wake_up_screen]');
+    try {
+        while (!device.isScreenOn()) {
+            device.wakeUpIfNeeded();
+            sleep(2000);
+        }
+    } catch (err) {
+        toastLog('点亮屏幕发生错误：' + err.message);
+    }
+
     if (!use_while) {
         device.keepScreenOn(60 * 1000);
         sleep(1000);
     }
-    app.launch('com.cmri.universalapp');
-    //text('全屋智能').id('tv_quanwu').waitFor();
-    sleep(10000);
-    if (id('sm_device_name_tv').textContains('手机').exists()) {
-        var btn = id('sm_device_name_tv').textContains('手机').findOne();
-        btn.parent().click();
-        id('image_socket_switch').className('android.widget.ImageView').waitFor();
+}
 
-    } else if (id('image_socket_switch').className('android.widget.ImageView').exists()) {
+function hejiaqinApp(turn_on) {
+    //if (!device.isScreenOn())
+    //    device.wakeUp();
+    console.log('[hejiaqinApp]');
 
-    } else {
-        toastLog('打开应用不正确，没找到对应元素');
+    wake_up_screen();
+
+    try {
+        let app_opened = false;
+        while (!app_opened) {
+            app.launch('com.cmri.universalapp');
+            //text('全屋智能').id('tv_quanwu').waitFor();
+            sleep(10000);
+            if (id('sm_device_name_tv').textContains('手机').exists()) {
+                var btn = id('sm_device_name_tv').textContains('手机').findOne();
+                btn.parent().click();
+                id('image_socket_switch').className('android.widget.ImageView').waitFor();
+
+            } else if (id('image_socket_switch').className('android.widget.ImageView').exists()) {
+
+            } else {
+                toastLog('打开应用不正确，没找到对应元素');
+                //结束app，执行脚本要手机root
+                let result = shell('am force-stop com.cmri.universalapp', true);
+                console.log(result);
+                if (result.code == 0) {
+                    toastLog('成功结束应用');
+                } else {
+                    toastLog('结束应用失败');
+                }
+                sleep(30000);
+                wake_up_screen();
+            }
+        }
+
+    } catch (err) {
+        toastLog('打开应用发生错误：' + err.message);
     }
+
     let status = id('multiple_switch_status_tv').className('android.widget.TextView').findOne(5000);
     if (status) {
         if (turn_on) {
@@ -49,6 +84,7 @@ function hejiaqinApp(turn_on) {
 }
 
 function checkout() {
+    console.log('[checkout]');
     var battery = device.getBattery();
     var isCharging = device.isCharging();
     toastLog('电池电量：' + battery + '%，');
@@ -65,10 +101,11 @@ function checkout() {
 
 //hejiaqinApp(false);
 
-while (true) {
-    sleep(5 * 60 * 1000);
+console.log('[程序开始执行]');
+setInterval(function () {
+    toastLog('开始新一轮执行');
     checkout();
-}
+}, 5 * 60 * 1000);
 
 
 
