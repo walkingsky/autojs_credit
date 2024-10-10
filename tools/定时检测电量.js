@@ -41,9 +41,10 @@ function hejiaqinApp(turn_on) {
                 var btn = id('sm_device_name_tv').textContains('手机').findOne();
                 btn.parent().click();
                 id('image_socket_switch').className('android.widget.ImageView').waitFor();
+                app_opened = true;
 
             } else if (id('image_socket_switch').className('android.widget.ImageView').exists()) {
-
+                app_opened = true;
             } else {
                 toastLog('打开应用不正确，没找到对应元素');
                 //结束app，执行脚本要手机root
@@ -54,7 +55,7 @@ function hejiaqinApp(turn_on) {
                 } else {
                     toastLog('结束应用失败');
                 }
-                sleep(30000);
+                sleep(3000);
                 wake_up_screen();
             }
         }
@@ -105,7 +106,7 @@ console.log('[程序开始执行]');
 setInterval(function () {
     toastLog('开始新一轮执行');
     checkout();
-}, 5 * 60 * 1000);
+}, 300000);
 
 
 
