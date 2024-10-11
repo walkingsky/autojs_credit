@@ -24,19 +24,26 @@ function wake_up_screen() {
     }
 }
 
+function kill_app() {
+    //结束app，执行脚本要手机root
+    console.log('[kill_app]');
+    let result = shell('am force-stop com.cmri.universalapp', true);
+    if (result.code == 0) {
+        toastLog('成功结束应用');
+    } else {
+        toastLog('结束应用失败');
+    }
+}
+
 function hejiaqinApp(turn_on) {
-    //if (!device.isScreenOn())
-    //    device.wakeUp();
     console.log('[hejiaqinApp]');
-
-    wake_up_screen();
-
     try {
         let app_opened = false;
         while (!app_opened) {
             app.launch('com.cmri.universalapp');
             //text('全屋智能').id('tv_quanwu').waitFor();
-            sleep(10000);
+            sleep(20000);
+            wake_up_screen();
             if (id('sm_device_name_tv').textContains('手机').exists()) {
                 var btn = id('sm_device_name_tv').textContains('手机').findOne();
                 btn.parent().click();
@@ -47,14 +54,7 @@ function hejiaqinApp(turn_on) {
                 app_opened = true;
             } else {
                 toastLog('打开应用不正确，没找到对应元素');
-                //结束app，执行脚本要手机root
-                let result = shell('am force-stop com.cmri.universalapp', true);
-                console.log(result);
-                if (result.code == 0) {
-                    toastLog('成功结束应用');
-                } else {
-                    toastLog('结束应用失败');
-                }
+                kill_app();
                 sleep(3000);
                 wake_up_screen();
             }
@@ -63,7 +63,8 @@ function hejiaqinApp(turn_on) {
     } catch (err) {
         toastLog('打开应用发生错误：' + err.message);
     }
-
+    sleep(2000);
+    wake_up_screen();
     let status = id('multiple_switch_status_tv').className('android.widget.TextView').findOne(5000);
     if (status) {
         if (turn_on) {
@@ -71,17 +72,16 @@ function hejiaqinApp(turn_on) {
                 status.parent().click();
                 toastLog('打开')
             }
-
         } else {
             if (status.text() == '已打开') {
                 status.parent().click();
                 toastLog('关闭')
             }
-
         }
         sleep(5000);
+        //结束应用
+        kill_app();
     }
-
 }
 
 function checkout() {
@@ -94,13 +94,11 @@ function checkout() {
     if (battery == 100 && isCharging) {
         hejiaqinApp(false);
 
-    } else if (battery < 10 && !isCharging) {
+    } else if (battery < 12 && !isCharging) {
         hejiaqinApp(true);
     }
 }
 
-
-//hejiaqinApp(false);
 
 console.log('[程序开始执行]');
 setInterval(function () {
