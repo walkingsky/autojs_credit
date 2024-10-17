@@ -44,6 +44,11 @@ function hejiaqinApp(turn_on) {
             //text('全屋智能').id('tv_quanwu').waitFor();
             sleep(20000);
             wake_up_screen();
+            //关闭广告
+            if (id('tvCancel').className('android.widget.ImageView').indexInParent(1).exists()) {
+                id('tvCancel').className('android.widget.ImageView').indexInParent(1).findOne(1000).click();
+            }
+
             if (id('sm_device_name_tv').textContains('手机').exists()) {
                 var btn = id('sm_device_name_tv').textContains('手机').findOne();
                 btn.parent().click();
@@ -84,6 +89,58 @@ function hejiaqinApp(turn_on) {
     }
 }
 
+function 智慧生活App(turn_on) {
+    console.log('[智慧生活App]');
+    try {
+        let app_opened = false;
+        while (!app_opened) {
+            app.launch('com.tuya.smartlifeiot');
+            sleep(20000);
+            wake_up_screen();
+            //关闭广告
+            if (id('tvCancel').className('android.widget.ImageView').indexInParent(1).exists()) {
+                id('tvCancel').className('android.widget.ImageView').indexInParent(1).findOne(1000).click();
+            }
+
+            if (id('deviceName').textContains('手机').exists()) {
+                var btn = id('deviceName').textContains('手机').findOne();
+                btn.parent().parent().click();
+                className('android.widget.TextView').textContains('设置').waitFor();
+                //app_opened = true;
+
+            } else if (className('android.widget.TextView').textContains('设置').exists()) {
+                //app_opened = true;
+            } else {
+                toastLog('打开应用不正确，没找到对应元素');
+                sleep(3000);
+                wake_up_screen();
+            }
+
+            click(540, 985);
+
+            sleep(3000);
+
+            if (turn_on) {
+                if (device.isCharging()) {
+                    console.log('设备在充电');
+                    app_opened = true;
+                    toastLog('打开')
+                }
+            } else {
+                if (!device.isCharging()) {
+                    console.log('设备没有在充电');
+                    app_opened = true;
+                    toastLog('关闭')
+                }
+            }
+
+        }
+
+    } catch (err) {
+        toastLog('打开应用发生错误：' + err.message);
+    }
+}
+
 function checkout() {
     console.log('[checkout]');
     var battery = device.getBattery();
@@ -92,10 +149,12 @@ function checkout() {
     toastLog(isCharging ? '正在充电' : '没有在充电');
 
     if (battery == 100 && isCharging) {
-        hejiaqinApp(false);
+        //hejiaqinApp(false);
+        智慧生活App(false);
 
     } else if (battery < 12 && !isCharging) {
-        hejiaqinApp(true);
+        //hejiaqinApp(true);
+        智慧生活App(true);
     }
 }
 
